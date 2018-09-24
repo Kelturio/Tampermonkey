@@ -12,11 +12,12 @@
     'use strict';
     $('form input[name=type]')[0].value = 'key';
     $('form div[data-checkbox-value=key]').addClass('is-selected')
-    $('form > div > div.form__row.form__row--giveaway-keys.is-hidden').removeClass('is-hidden');
+    $('form div.form__row--giveaway-keys.is-hidden').removeClass('is-hidden');
     $('form input[name=start_time]')[0].value = 'Sep 25, 2018 4:20 am';
     $('form input[name=end_time]')[0].value = 'Sep 30, 2018 4:20 pm';
     $('form input[name=region_restricted]')[0].value = '0';
     $('form div[data-checkbox-value=0][data-trigger-list=0]').addClass('is-selected');
+    $('form input[name=who_can_enter]')[0].value = 'everyone';
     $('form textarea[name=description]')[0].value = [
         'Akk!',
         'Steam Group: [Searinox Army](https://steamcommunity.com/groups/searinoxarmy#members)',
