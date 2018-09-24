@@ -11,6 +11,7 @@
 (function() {
     'use strict';
     $('form input[name=type]')[0].value = 'key';
+    $('form div[data-checkbox-value=key]').addClass('is-selected')
     $('form > div > div.form__row.form__row--giveaway-keys.is-hidden').removeClass('is-hidden');
     $('form input[name=start_time]')[0].value = 'Sep 25, 2018 4:20 am';
     $('form input[name=end_time]')[0].value = 'Sep 30, 2018 4:20 pm';
