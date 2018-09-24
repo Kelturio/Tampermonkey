@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Steamgifts Giveaways - New
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.2
 // @description  try to take over the world!
 // @author       Searinox
 // @match        https://www.steamgifts.com/giveaways/new
@@ -10,6 +10,7 @@
 
 (function() {
     'use strict';
+    let contributor_level = '10';
     $('form input[name=type]')[0].value = 'key';
     $('form div[data-checkbox-value=key]').addClass('is-selected')
     $('form div.form__row--giveaway-keys.is-hidden').removeClass('is-hidden');
@@ -19,7 +20,8 @@
     $('form div[data-checkbox-value=0][data-trigger-list=0]').addClass('is-selected');
     $('form input[name=who_can_enter]')[0].value = 'everyone';
     $('form div[data-checkbox-value=everyone][data-trigger-list=0]').addClass('is-selected');
-    $('form input[name=contributor_level]')[0].value = '10';
+    $('form input[name=contributor_level]')[0].value = contributor_level;
+    $('form div.ui-slider-range.ui-widget-header.ui-slider-range-min').css('width', `${contributor_level * 10}%`)
     $('form textarea[name=description]')[0].value = [
         'Akk!',
         'Steam Group: [Searinox Army](https://steamcommunity.com/groups/searinoxarmy#members)',
