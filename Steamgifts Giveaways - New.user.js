@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Steamgifts Giveaways - New
 // @namespace    http://tampermonkey.net/
-// @version      1.2
+// @version      1.3
 // @description  try to take over the world!
 // @author       Searinox
 // @match        https://www.steamgifts.com/giveaways/new
@@ -17,11 +17,12 @@
     $('form input[name=start_time]')[0].value = 'Sep 25, 2018 4:20 am';
     $('form input[name=end_time]')[0].value = 'Sep 30, 2018 4:20 pm';
     $('form input[name=region_restricted]')[0].value = '0';
-    $('form div[data-checkbox-value=0][data-trigger-list=0]').addClass('is-selected');
+    $('form div[data-checkbox-value=0]').addClass('is-selected');
     $('form input[name=who_can_enter]')[0].value = 'everyone';
-    $('form div[data-checkbox-value=everyone][data-trigger-list=0]').addClass('is-selected');
+    $('form div[data-checkbox-value=everyone]').addClass('is-selected');
     $('form input[name=contributor_level]')[0].value = contributor_level;
-    $('form div.ui-slider-range.ui-widget-header.ui-slider-range-min').css('width', `${contributor_level * 10}%`)
+    $('form div.ui-slider-range.ui-slider-range-min').css('width', `${contributor_level * 10}%`);
+    $('form span.ui-slider-handle.ui-state-default').css('left', `${contributor_level * 10}%`);
     $('form textarea[name=description]')[0].value = [
         'Akk!',
         'Steam Group: [Searinox Army](https://steamcommunity.com/groups/searinoxarmy#members)',
