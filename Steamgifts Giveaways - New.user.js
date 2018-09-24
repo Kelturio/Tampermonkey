@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Steamgifts Giveaways - New
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      1.0
 // @description  try to take over the world!
 // @author       Searinox
 // @match        https://www.steamgifts.com/giveaways/new
@@ -18,6 +18,7 @@
     $('form input[name=region_restricted]')[0].value = '0';
     $('form div[data-checkbox-value=0][data-trigger-list=0]').addClass('is-selected');
     $('form input[name=who_can_enter]')[0].value = 'everyone';
+    $('form div[data-checkbox-value=everyone][data-trigger-list=0]').addClass('is-selected');
     $('form textarea[name=description]')[0].value = [
         'Akk!',
         'Steam Group: [Searinox Army](https://steamcommunity.com/groups/searinoxarmy#members)',
