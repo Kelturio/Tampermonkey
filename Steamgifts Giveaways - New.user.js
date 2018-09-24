@@ -16,6 +16,7 @@
     $('form input[name=start_time]')[0].value = 'Sep 25, 2018 4:20 am';
     $('form input[name=end_time]')[0].value = 'Sep 30, 2018 4:20 pm';
     $('form input[name=region_restricted]')[0].value = '0';
+    $('form div[data-checkbox-value=0][data-trigger-list=0]').addClass('is-selected');
     $('form textarea[name=description]')[0].value = [
         'Akk!',
         'Steam Group: [Searinox Army](https://steamcommunity.com/groups/searinoxarmy#members)',
