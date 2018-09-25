@@ -1,1 +1,1 @@
-var akk = 42;
+top.akk = 42;
