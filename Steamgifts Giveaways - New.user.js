@@ -40,7 +40,7 @@
             [...this.children[0].children[0].children].map((e) => {
                 $(e).click(() => {
                     let img = header.replace('{id}', $(e).find('a')[0].href.replace(/\D+/g, ''));
-                    if(!images.includes(img)) {
+                    if (!images.includes(img)) {
                         images.unshift(img);
                     }
                     let description = [...text, ...images.map(e => `![Searinox Army](${e})`)].join('\n');
