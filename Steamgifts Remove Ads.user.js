@@ -15,6 +15,7 @@
         $('body > div.page__outer-wrap > div > div > div.sidebar.sidebar--wide > div.sidebar__mpu').remove();
         let iframe = $('body > div.page__outer-wrap > div > div > div > div > div > div > iframe')[0];
         iframe && iframe.parentElement.parentElement.parentElement.remove();
+        $('a[href="https://www.patreon.com/steamgifts"]')[0].parentElement.remove();
     }
     let i = 0, interval = setInterval(() => {
         (++i > 8) && (clearInterval(interval) || console.debug('removeAds clearInterval', interval));
