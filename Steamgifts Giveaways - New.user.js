@@ -4,6 +4,7 @@
 // @version      1.5
 // @description  try to take over the world!
 // @author       Searinox
+// @icon		 https://avatars0.githubusercontent.com/u/16297928?s=460&v=4
 // @match        https://www.steamgifts.com/giveaways/new
 // @grant        none
 // ==/UserScript==

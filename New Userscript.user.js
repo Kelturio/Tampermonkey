@@ -3,7 +3,8 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @description  try to take over the world!
-// @author       You
+// @author       Searinox
+// @icon		 https://avatars0.githubusercontent.com/u/16297928?s=460&v=4
 // @include      /https?://www.steamgifts.com//
 // @grant        none
 // ==/UserScript==
