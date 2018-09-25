@@ -18,6 +18,6 @@
     }
     let i = 0, interval = setInterval(() => {
         (++i > 8) && (clearInterval(interval) || console.debug('removeAds clearInterval', interval));
-        $('iframe').length && (removeAds() || [...$('iframe')].map((e) => console.error('IFRAME', e) || e));
+        $('iframe').length && (removeAds() || console.error('IFRAME', $('iframe')));
     }, 420);
 })();
