@@ -19,7 +19,6 @@
         'SFX_FART'
     ].map((e) => new Audio(url.concat(e, '.wav')));
     let play = (audio) => {
-        console.log(audio)
         audio.pause();
         audio.currentTime = 0;
         //audio.playbackRate = 0.5;
