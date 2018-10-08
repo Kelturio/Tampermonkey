@@ -21,9 +21,7 @@
         //audio.playbackRate = 0.5;
         audio.play();
     }
-    let playRandom = () => {
-        Math.random() < 0.5 ? play(burp) : play(fart);
-    }
+    let playRandom = () => Math.random() < 0.5 ? play(burp) : play(fart)
     document.onkeydown = playRandom;
     document.addEventListener('click', playRandom);
 })();
