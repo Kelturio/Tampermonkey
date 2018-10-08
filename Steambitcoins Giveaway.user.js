@@ -4,7 +4,7 @@
 // @version      0.1
 // @description  try to take over the world!
 // @author       Searinox
-// @icon		 https://avatars0.githubusercontent.com/u/16297928?s=460&v=4
+// @icon         https://avatars0.githubusercontent.com/u/16297928?s=460&v=4
 // @match        http://steambitcoins.com/Giveaway*
 // @grant        none
 // ==/UserScript==
