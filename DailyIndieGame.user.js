@@ -223,7 +223,8 @@ top.akk = (function($) {
                     new: cols[1].innerHTML.compact().includes('New'),
                     steamPrice: parseFloat(cols[2].textContent.replace('$', '')),
                     gameTitle: cols[3].textContent,
-                    gameUrl: cols[3].children[0] && cols[3].children[0].href,
+                    //gameUrl: cols[3].children[0] && cols[3].children[0].href,
+                    gameId: cols[3].children[0] && akk.getAppidFromUrl(cols[3].children[0].href),
                     type: cols[4].textContent,
                     macOs: cols[5].innerHTML.includes('img'),
                     linux: cols[6].innerHTML.includes('img'),
@@ -240,7 +241,8 @@ top.akk = (function($) {
                 cols = {
                     no: parseInt(cols[0].textContent),
                     gameTitle: cols[1].textContent,
-                    gameUrl: cols[1].children[0] && cols[1].children[0].href,
+                    //gameUrl: cols[1].children[0] && cols[1].children[0].href,
+                    gameId: cols[1].children[0] && akk.getAppidFromUrl(cols[1].children[0].href),
                     regionLock: cols[2].textContent.compact(),
                     comment: cols[3].textContent,
                     card: cols[4].textContent.includes('YES'),
@@ -286,7 +288,7 @@ top.akk = (function($) {
             return e.gameTitle && e.gameTitle.includes(td.textContent.compact());
         });
         if (!href.length) return;
-        href = href.first().gameUrl;
+        href = akk.url.app.concat(href.first().gameId);
         let a = $('<a/>').attr('href', href).appendTo(td);
         let span = $('<span/>').text(td.textContent).appendTo(a);
         td.firstChild.remove();
@@ -327,7 +329,8 @@ top.akk = (function($) {
     };
     akk.cleanGameData = () => {
         let gameDataNew = {};
-        _.values(akk.gameData).filter((e) => e.gameUrl && e.md5).map((e) => {gameDataNew[e.md5] = e;});
+        //_.values(akk.gameData).filter((e) => e.gameUrl && e.md5).map((e) => {gameDataNew[e.md5] = e;});
+        _.values(akk.gameData).filter((e) => e.gameUrl && !e.gameId).map((e) => {_.set(gameDataNew, e.md5, 5)})
         _.set(akk, 'gameData', gameDataNew);
         akk.saveLocalStorage();
     };
