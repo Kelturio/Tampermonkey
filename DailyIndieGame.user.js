@@ -14,22 +14,22 @@ top.akk = (function($) {
     let akk = {};
     akk.url = {
         loadjs: 'https://cdnjs.cloudflare.com/ajax/libs/loadjs/3.5.4/loadjs.min.js',
-		userdata: 'https://store.steampowered.com/dynamicstore/userdata/',
-		app: 'http://store.steampowered.com/app/',
-		registerKey: 'https://store.steampowered.com/account/registerkey?key='
-	};
-	akk.sel = {
-		hideGamesOwned: [
-			'#TableKeys > tbody > tr > td:nth-child(4) > a',
-			'#TableKeys > tbody > tr > td:nth-child(2) > a'
+        userdata: 'https://store.steampowered.com/dynamicstore/userdata/',
+        app: 'http://store.steampowered.com/app/',
+        registerKey: 'https://store.steampowered.com/account/registerkey?key='
+    };
+    akk.sel = {
+        hideGamesOwned: [
+            '#TableKeys > tbody > tr > td:nth-child(4) > a',
+            '#TableKeys > tbody > tr > td:nth-child(2) > a'
         ],
-		allPages: '#DIG2TableGray > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > a',
-		firstPage: '#DIG2TableGray > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > a:nth-child(6)',
-		firstPageParent: '#DIG2TableGray > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td',
-		activePage: '#DIG2TableGray > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > a > span.DIG2-TitleOrange2',
-		rowsTableKeys: '#TableKeys > tbody > tr',
-		tableKeysRow: '#TableKeys > tbody > tr'
-	};
+        allPages: '#DIG2TableGray > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > a',
+        firstPage: '#DIG2TableGray > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > a:nth-child(6)',
+        firstPageParent: '#DIG2TableGray > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td',
+        activePage: '#DIG2TableGray > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > a > span.DIG2-TitleOrange2',
+        rowsTableKeys: '#TableKeys > tbody > tr',
+        tableKeysRow: '#TableKeys > tbody > tr'
+    };
     akk.checkUserData = () => {
         akk.log('checkUserData');
         return new Promise(function(resolve, reject) {
@@ -133,15 +133,15 @@ top.akk = (function($) {
         akk.log('hideGamesOwned');
         akk.sel.hideGamesOwned.map((sel) => $(sel).toArray()).flatten()
             .map((e) => {
-                return {
-                    el: e,
-                    id: akk.getAppidFromUrl(e.href)
-                };
-            })
+            return {
+                el: e,
+                id: akk.getAppidFromUrl(e.href)
+            };
+        })
             .filter((e) => akk.getOwnedApps().includes(e.id))
             .map((e) => {
-                e.el.parentElement.parentElement.style.display = 'none';
-            });
+            e.el.parentElement.parentElement.style.display = 'none';
+        });
     };
     akk.getPages = () => {
         akk.log('getPages');
@@ -155,20 +155,21 @@ top.akk = (function($) {
         akk.log('appendCloneSel');
         return $(destination).append($(target).clone())[0].lastChild;
     };
-    akk.newPagesProps = [{
+    akk.newPagesProps = [
+        {
             text: '|<<<',
             href: () => akk.oldPages.first().href
         },
         {
             text: '<<<',
             href: () => (akk.activePage.previousElementSibling && akk.activePage.previousElementSibling.nodeName !== 'BR' &&
-                    Number.isFinite(+akk.activePage.previousElementSibling.innerText)) ?
-                akk.activePage.previousElementSibling : akk.oldPages.first().href
+                         Number.isFinite(+akk.activePage.previousElementSibling.innerText)) ?
+            akk.activePage.previousElementSibling : akk.oldPages.first().href
         },
         {
             text: '>>>',
             href: () => (akk.activePage.nextElementSibling && Number.isFinite(+akk.activePage.nextElementSibling.innerText)) ?
-                akk.activePage.nextElementSibling.href : akk.oldPages.last().href
+            akk.activePage.nextElementSibling.href : akk.oldPages.last().href
         },
         {
             text: '>>>|',
@@ -212,7 +213,7 @@ top.akk = (function($) {
         akk.log('updateGameData');
         let rows = $(akk.sel.tableKeysRow).toArray();
         if (rows.length < 2 || (!location.pathname.includes('digstore') && !location.pathname.includes('tradesXT') &&
-                !location.pathname.includes('storeXT_updateshowpurchased'))) return [];
+                                !location.pathname.includes('storeXT_updateshowpurchased'))) return [];
         rows = rows.map((row) => {
             let cols = _.toArray(row.children);
             //console.log(cols);
