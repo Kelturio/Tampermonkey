@@ -37,7 +37,7 @@ top.akk = (function($) {
                 if ((Date.now() - akk.userdata_date) > 100e3) {
                     resolve();
                 } else {
-                    reject()
+                    reject();
                 }
             } else {
                 resolve();
@@ -48,7 +48,12 @@ top.akk = (function($) {
         akk.log('updateUserData');
         return new Promise(function(resolve, reject) {
             $.getJSON(akk.url.userdata, (data) => {
-                _.set(akk, 'userdata', data);
+                if (!_.isEmpty(data.rgOwnedApps)) {
+                    _.set(akk, 'userdata', data);
+                } else {
+                    reject();
+                    console.warn('userdata.rgOwnedApps is empty');
+                }
                 _.set(akk, 'userdata_date', Date.now());
                 resolve();
             });
@@ -60,14 +65,23 @@ top.akk = (function($) {
             return cb.call(akk);
         }
     };
-    akk.localStorageKeys = ['userdata', 'userdata_date', 'blacklist', 'gameData'];
+    akk.localStorageKeys = [{key: 'userdata', default: null},
+                            {key: 'userdata_date', default: null},
+                            {key: 'blacklist', default: []},
+                            {key: 'gameData', default: {}}];
+    akk.blacklist = [];
+    akk.gameData = {};
     akk.loadLocalStorage = () => {
         akk.log('loadLocalStorage');
         return new Promise(function(resolve, reject) {
-            akk.localStorageKeys.map((key, i) => {
-                top.localforage.getItem(key).then(function(value) {
-                    if (!value) console.warn('loadLocalStorage', key);
-                    _.set(akk, key, value);
+            akk.localStorageKeys.map((e, i) => {
+                top.localforage.getItem(e.key).then(function(value) {
+                    if (!value){
+                        console.warn('loadLocalStorage', e.key);
+                    }
+                    if (_.isNull(_.set(akk, e.key, value)[e.key])) {
+                        _.set(akk, e.key, e.default);
+                    }
                     if (i === akk.localStorageKeys.length - 1) {
                         resolve();
                     }
@@ -75,7 +89,7 @@ top.akk = (function($) {
             });
         });
         /*return akk.localStorageKeys.map((key) => {
-            akk[key] = JSON.parse(localStorage.getItem(key));
+            akk[e.key] = JSON.parse(localStorage.getItem(e.key));
         });*/
     };
 
@@ -88,18 +102,18 @@ top.akk = (function($) {
     akk.saveLocalStorage = () => {
         akk.log('saveLocalStorage');
         return new Promise(function(resolve, reject) {
-            akk.localStorageKeys.map((key, i) => {
-                if (akk[key]) {
-                    top.localforage.setItem(key, akk[key]).then(akk.log).catch(akk.err);
+            akk.localStorageKeys.map((e, i) => {
+                if (akk[e.key]) {
+                    top.localforage.setItem(e.key, akk[e.key]).then(akk.log).catch(akk.err);
                 } else {
-                    akk.err('saveLocalStorage'.concat(' ', key));
+                    akk.err('saveLocalStorage'.concat(' ', e.key));
                 }
                 if (i === akk.localStorageKeys.length - 1) {
                     resolve();
                 }
             });
         });
-        //return akk.localStorageKeys.map((key) => localStorage.setItem(key, JSON.stringify(akk[key])));
+        //return akk.localStorageKeys.map((e.key) => localStorage.setItem(e.key, JSON.stringify(akk[e.key])));
     };
     akk.addBlacklist = (appid) => {
         console.log('addBlacklist', appid);
@@ -226,14 +240,15 @@ top.akk = (function($) {
                     no: parseInt(cols[0].textContent),
                     gameTitle: cols[1].textContent,
                     gameUrl: cols[1].children[0] && cols[1].children[0].href,
-                    comment: cols[2].textContent,
-                    card: cols[3].textContent.includes('YES'),
-                    sellerRating: parseInt(cols[4].textContent.compact().replace('%', '')),
-                    viewOffers: cols[5].children[0] && cols[5].children[0].href.replace(location.origin, ''),
+                    regionLock: cols[2].textContent.compact(),
+                    comment: cols[3].textContent,
+                    card: cols[4].textContent.includes('YES'),
+                    sellerRating: parseInt(cols[5].textContent.compact().replace('%', '')),
+                    //viewOffers: cols[5].children[0] && cols[5].children[0].href.replace(location.origin, ''),
                     publisher: cols[6].textContent,
-                    pricePoints: parseInt(cols[7].textContent.replace('DIG Points', '').compact()),
-                    priceUSD: parseFloat(cols[8].textContent.replace('$', '')),
-                    buy: cols[9].children[0] && cols[9].children[0].href.replace(location.origin, ''),
+                    //pricePoints: parseInt(cols[7].textContent.replace('DIG Points', '').compact()),
+                    priceUSD: parseFloat(cols[7].textContent.replace('$', '')),
+                    buy: cols[8].children[0] && cols[8].children[0].href.replace(location.origin, ''),
                     ts: Date.now()
                 };
             }
@@ -327,9 +342,9 @@ top.akk = (function($) {
         akk.log('Setup');
         top.Sugar.extend();
         akk.loadLocalStorage()
-            //.then(() => akk.checkUserData())
-            //.then(() => akk.updateUserData())
-            //.then(() => akk.saveLocalStorage())
+            .then(() => akk.checkUserData())
+            .then(() => akk.updateUserData())
+            .then(() => akk.saveLocalStorage())
             .catch(() => console.warn('catch'))
             .then(() => akk.Main())
     };
