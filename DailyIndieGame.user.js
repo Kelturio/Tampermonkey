@@ -47,7 +47,7 @@ top.akk = (function($) {
     akk.updateUserData = () => {
         akk.log('updateUserData');
         return new Promise(function(resolve, reject) {
-            $.getJSON(akk.url.userdata, (data) => {
+            $.getJSON(`${akk.url.userdata}?_=${Date.now()}`, (data) => {
                 if (!_.isEmpty(data.rgOwnedApps)) {
                     _.set(akk, 'userdata', data);
                 } else {
@@ -65,7 +65,7 @@ top.akk = (function($) {
             return cb.call(akk);
         }
     };
-    akk.localStorageKeys = [{key: 'userdata', default: null},
+    akk.localStorageKeys = [{key: 'userdata', default: {rgOwnedApps: []}},
                             {key: 'userdata_date', default: null},
                             {key: 'blacklist', default: []},
                             {key: 'gameData', default: {}}];
@@ -194,7 +194,8 @@ top.akk = (function($) {
     };
     akk.modTableKeysAccount = () => {
         akk.log('modTableKeysAccount');
-        if (location.pathname.includes('tradesXT') || location.pathname.includes('storeXT_updateshowpurchased') || location.pathname.includes('digstore')) return;
+        if (location.pathname.includes('tradesXT') || location.pathname.includes('storeXT') ||
+            location.pathname.includes('digstore') || location.pathname.includes('store_updateshowdlc')) return;
         _.set(akk, 'tableKeys', $(akk.sel.rowsTableKeys).toArray().from(1).map((tr) => {
             let key = tr.children[4].innerText;
             let td = $('<td/>').attr('valign', 'top').appendTo(tr);
@@ -212,12 +213,15 @@ top.akk = (function($) {
     akk.updateGameData = () => {
         akk.log('updateGameData');
         let rows = $(akk.sel.tableKeysRow).toArray();
-        if (rows.length < 2 || (!location.pathname.includes('digstore') && !location.pathname.includes('tradesXT') &&
-                                !location.pathname.includes('storeXT_updateshowpurchased'))) return [];
+        if (rows.length < 2 ||
+            (!location.pathname.includes('digstore') && !location.pathname.includes('store_updateshowdlc') &&
+             !location.pathname.includes('tradesXT') && !location.pathname.includes('storeXT'))) {
+            return [];
+        }
         rows = rows.map((row) => {
             let cols = _.toArray(row.children);
             //console.log(cols);
-            if (location.pathname.includes('digstore')) {
+            if (location.pathname.includes('digstore') || location.pathname.includes('store_updateshowdlc')) {
                 cols = {
                     no: parseInt(cols[0].textContent),
                     new: cols[1].innerHTML.compact().includes('New'),
@@ -233,11 +237,12 @@ top.akk = (function($) {
                     card: cols[9].textContent.includes('YES'),
                     pricePoints: parseInt(cols[10].textContent.replace('DIG Points', '').compact()),
                     priceUSD: parseFloat(cols[11].textContent.replace('$', '')),
-                    buy: cols[12].children[0] && cols[12].children[0].href.replace(location.origin, ''),
+                    //buy: cols[12].children[0] && cols[12].children[0].href.replace(location.origin, ''),
+                    buyId: cols[12].children[0] && +cols[12].children[0].href.replace(/\D+/g, ''),
+                    buyTrade: cols[12].children[0] && cols[12].children[0].href.includes('buytrade'),
                     ts: Date.now()
                 };
-            }
-            if (location.pathname.includes('tradesXT') || location.pathname.includes('storeXT_updateshowpurchased')) {
+            } else if (location.pathname.includes('tradesXT') || location.pathname.includes('storeXT')) {
                 cols = {
                     no: parseInt(cols[0].textContent),
                     gameTitle: cols[1].textContent,
@@ -251,10 +256,12 @@ top.akk = (function($) {
                     publisher: cols[6].textContent,
                     //pricePoints: parseInt(cols[7].textContent.replace('DIG Points', '').compact()),
                     priceUSD: parseFloat(cols[7].textContent.replace('$', '')),
-                    buy: cols[8].children[0] && cols[8].children[0].href.replace(location.origin, ''),
+                    //buy: cols[8].children[0] && cols[8].children[0].href.replace(location.origin, ''),
+                    buyId: +cols[8].children[0] && cols[8].children[0].href.replace(/\D+/g, ''),
+                    buyTrade: cols[8].children[0] && cols[8].children[0].href.includes('buytrade'),
                     ts: Date.now()
                 };
-            }
+            } else akk.err('updateGameData.rows.cols')
             cols = akk.addChecksumObj(cols);
             return cols;
         });
@@ -308,7 +315,7 @@ top.akk = (function($) {
     };
     akk.modTableKeysXT = () => {
         akk.log('modTableKeysXT');
-        if (location.pathname.includes('tradesXT') || location.pathname.includes('storeXT_updateshowpurchased')) {
+        if (location.pathname.includes('tradesXT') || location.pathname.includes('storeXT')) {
             akk.tableKeys = $(akk.sel.rowsTableKeys).toArray().from(2).map((tr) => {
                 let href = tr.children[1].firstElementChild.href;
                 akk.addButtonBlacklist(tr, href);
