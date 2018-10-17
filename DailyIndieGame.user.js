@@ -127,7 +127,7 @@ top.akk = (function($) {
         return akk.userdata.rgOwnedApps.concat(akk.blacklist);
     };
     akk.getAppidFromUrl = (url) => {
-        return (Object.isString(url)) ? +(url.split(akk.url.app)[1].replace('/', '')) : '';
+        return (Object.isString(url)) ? +url.split('steampowered').last().split('/')[2] : '';
     };
     akk.hideGamesOwned = () => {
         akk.log('hideGamesOwned');
@@ -194,8 +194,7 @@ top.akk = (function($) {
     };
     akk.modTableKeysAccount = () => {
         akk.log('modTableKeysAccount');
-        if (location.pathname.includes('tradesXT') || location.pathname.includes('storeXT') ||
-            location.pathname.includes('digstore') || location.pathname.includes('store_updateshowdlc')) return;
+        if (!location.pathname.includes('account_page')) return;
         _.set(akk, 'tableKeys', $(akk.sel.rowsTableKeys).toArray().from(1).map((tr) => {
             let key = tr.children[4].innerText;
             let td = $('<td/>').attr('valign', 'top').appendTo(tr);
@@ -220,7 +219,6 @@ top.akk = (function($) {
         }
         rows = rows.map((row) => {
             let cols = _.toArray(row.children);
-            //console.log(cols);
             if (location.pathname.includes('digstore') || location.pathname.includes('store_updateshowdlc')) {
                 cols = {
                     no: parseInt(cols[0].textContent),
@@ -235,7 +233,7 @@ top.akk = (function($) {
                     vr: cols[7].innerHTML.includes('img'),
                     achievements: cols[8].innerHTML.includes('img'),
                     card: cols[9].textContent.includes('YES'),
-                    pricePoints: parseInt(cols[10].textContent.replace('DIG Points', '').compact()),
+                    //pricePoints: parseInt(cols[10].textContent.replace('DIG Points', '').compact()),
                     priceUSD: parseFloat(cols[11].textContent.replace('$', '')),
                     //buy: cols[12].children[0] && cols[12].children[0].href.replace(location.origin, ''),
                     buyId: cols[12].children[0] && +cols[12].children[0].href.replace(/\D+/g, ''),
@@ -255,6 +253,7 @@ top.akk = (function($) {
                     //viewOffers: cols[5].children[0] && cols[5].children[0].href.replace(location.origin, ''),
                     publisher: cols[6].textContent,
                     //pricePoints: parseInt(cols[7].textContent.replace('DIG Points', '').compact()),
+                    //pricePoints: +(parseFloat(cols[7].textContent.replace('$', '')) * 100),
                     priceUSD: parseFloat(cols[7].textContent.replace('$', '')),
                     //buy: cols[8].children[0] && cols[8].children[0].href.replace(location.origin, ''),
                     buyId: +cols[8].children[0] && cols[8].children[0].href.replace(/\D+/g, ''),
@@ -337,10 +336,25 @@ top.akk = (function($) {
     akk.cleanGameData = () => {
         let gameDataNew = {};
         //_.values(akk.gameData).filter((e) => e.gameUrl && e.md5).map((e) => {gameDataNew[e.md5] = e;});
-        _.values(akk.gameData).filter((e) => e.gameUrl && !e.gameId).map((e) => {_.set(gameDataNew, e.md5, 5)})
-        _.set(akk, 'gameData', gameDataNew);
-        akk.saveLocalStorage();
+        /*
+        _.values(akk.gameData).map((e) => {
+            let obj = _.clone(e);
+            _.set(obj, 'buyId', +obj.buy.replace(/\D+/g, ''));
+            _.set(obj, 'buyTrade', obj.buy.includes('buytrade'));
+            _.set(obj, 'gameId', akk.getAppidFromUrl(obj.gameUrl));
+            return akk.addChecksumObj(Object.reject(obj, ['buy', 'gameUrl']));
+        }).map((e) => _.set(gameDataNew, e.md5, e));
+        */ /*
+        _.values(akk.gameData).map((e) => {
+            let obj = _.clone(e);
+            _.isUndefined(obj.PricePoints) && _.set(obj, 'pricePoints', +(obj.priceUSD * 100));
+            return akk.addChecksumObj(obj);
+        }).map((e) => _.set(gameDataNew, e.md5, e));
+        */
+        //_.set(akk, 'gameData', gameDataNew);
+        //akk.saveLocalStorage();
     };
+    akk.getGameTitlesUnique = () => _.values(akk.gameData).map((e) => e.gameTitle).unique();
     akk.Init = (script, textStatus) => {
         akk.log('Init');
         let bundleIds = Object.keys(akk.bundles).map((bundleId) => {
