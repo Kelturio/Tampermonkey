@@ -31,10 +31,10 @@ top.akk = (function($) {
         tableKeysRow: '#TableKeys > tbody > tr'
     };
     akk.checkUserData = () => {
-        akk.log('checkUserData');
+        console.log('checkUserData');
         return new Promise(function(resolve, reject) {
             if (akk.userdata_date) {
-                if ((Date.now() - akk.userdata_date) > 100e3) {
+                if ((Date.now() - akk.userdata_date) > 120e3) {
                     resolve();
                 } else {
                     reject();
@@ -45,7 +45,7 @@ top.akk = (function($) {
         });
     };
     akk.updateUserData = () => {
-        akk.log('updateUserData');
+        console.log('updateUserData');
         return new Promise(function(resolve, reject) {
             $.getJSON(`${akk.url.userdata}?_=${Date.now()}`, (data) => {
                 if (!_.isEmpty(data.rgOwnedApps)) {
@@ -60,7 +60,7 @@ top.akk = (function($) {
         });
     };
     akk.callCb = (cb) => {
-        akk.log('callCb');
+        console.log('callCb');
         if (_.isFunction(cb)) {
             return cb.call(akk);
         }
@@ -72,7 +72,7 @@ top.akk = (function($) {
     akk.blacklist = [];
     akk.gameData = {};
     akk.loadLocalStorage = () => {
-        akk.log('loadLocalStorage');
+        console.log('loadLocalStorage');
         return new Promise(function(resolve, reject) {
             akk.localStorageKeys.map((e, i) => {
                 top.localforage.getItem(e.key).then(function(value) {
@@ -85,28 +85,21 @@ top.akk = (function($) {
                     if (i === akk.localStorageKeys.length - 1) {
                         resolve();
                     }
-                }).catch(akk.err);
+                }).catch(console.error);
             });
         });
         /*return akk.localStorageKeys.map((key) => {
             akk[e.key] = JSON.parse(localStorage.getItem(e.key));
         });*/
     };
-
-    akk.err = (err) => {
-        console.warn(err);
-    };
-    akk.log = (value) => {
-        console.log(value);
-    };
     akk.saveLocalStorage = () => {
-        akk.log('saveLocalStorage');
+        console.log('saveLocalStorage');
         return new Promise(function(resolve, reject) {
             akk.localStorageKeys.map((e, i) => {
                 if (akk[e.key]) {
-                    top.localforage.setItem(e.key, akk[e.key]).then(akk.log).catch(akk.err);
+                    top.localforage.setItem(e.key, akk[e.key]).then(console.log).catch(console.error);
                 } else {
-                    akk.err('saveLocalStorage'.concat(' ', e.key));
+                    console.error('saveLocalStorage'.concat(' ', e.key));
                 }
                 if (i === akk.localStorageKeys.length - 1) {
                     resolve();
@@ -130,7 +123,7 @@ top.akk = (function($) {
         return (Object.isString(url)) ? +url.split('steampowered').last().split('/')[2] : '';
     };
     akk.hideGamesOwned = () => {
-        akk.log('hideGamesOwned');
+        console.log('hideGamesOwned');
         akk.sel.hideGamesOwned.map((sel) => $(sel).toArray()).flatten()
             .map((e) => {
             return {
@@ -144,15 +137,15 @@ top.akk = (function($) {
         });
     };
     akk.getPages = () => {
-        akk.log('getPages');
+        console.log('getPages');
         return $(akk.sel.allPages);
     };
     akk.appendClone = (target, destination) => {
-        akk.log('appendClone');
+        console.log('appendClone');
         return destination.append(target.clone())[0].lastChild;
     };
     akk.appendCloneSel = (target, destination) => {
-        akk.log('appendCloneSel');
+        console.log('appendCloneSel');
         return $(destination).append($(target).clone())[0].lastChild;
     };
     akk.newPagesProps = [
@@ -177,7 +170,7 @@ top.akk = (function($) {
         }
     ];
     akk.modPages = () => {
-        akk.log('modPages');
+        console.log('modPages');
         _.set(akk, 'activePage', $(akk.sel.activePage)[0]);
         let pages = akk.getPages();
         if (!pages.length || !akk.activePage) return;
@@ -193,7 +186,7 @@ top.akk = (function($) {
         pages.appendTo($(akk.sel.firstPageParent));
     };
     akk.modTableKeysAccount = () => {
-        akk.log('modTableKeysAccount');
+        console.log('modTableKeysAccount');
         if (!location.pathname.includes('account_page')) return;
         _.set(akk, 'tableKeys', $(akk.sel.rowsTableKeys).toArray().from(1).map((tr) => {
             let key = tr.children[4].innerText;
@@ -210,7 +203,7 @@ top.akk = (function($) {
     };
     akk.updateGameDataMd5Blacklist = ['d58ba90acecfed7e6900bff6029f644b'];
     akk.updateGameData = () => {
-        akk.log('updateGameData');
+        console.log('updateGameData');
         let rows = $(akk.sel.tableKeysRow).toArray();
         if (rows.length < 2 ||
             (!location.pathname.includes('digstore') && !location.pathname.includes('store_updateshowdlc') &&
@@ -260,7 +253,7 @@ top.akk = (function($) {
                     buyTrade: cols[8].children[0] && cols[8].children[0].href.includes('buytrade'),
                     ts: Date.now()
                 };
-            } else akk.err('updateGameData.rows.cols')
+            } else console.error('updateGameData.rows.cols')
             cols = akk.addChecksumObj(cols);
             return cols;
         });
@@ -270,9 +263,9 @@ top.akk = (function($) {
             _.set(rowsObj, row.md5, row);
         });
         _.set(akk, 'gameDataNew', rowsObj);
-        akk.log(_.size(akk.gameData), 'before merge');
+        console.log(_.size(akk.gameData), 'before merge');
         Object.merge(akk.gameData, akk.gameDataNew);
-        akk.log(_.size(akk.gameData), 'after merge');
+        console.log(_.size(akk.gameData), 'after merge');
         akk.saveLocalStorage();
         return rows;
     };
@@ -280,12 +273,12 @@ top.akk = (function($) {
         return _.set(obj, 'md5', top.md5(JSON.stringify(Object.reject(obj, ['no', 'ts', 'md5']))));
     };
     akk.modDPSform = (url) => {
-        akk.log('modDPSform');
+        console.log('modDPSform');
         if (!location.pathname.includes('account_buy')) return;
         if ($('#DPSform')[0] && $('#DPSform')[0].onsubmit) $('#DPSform')[0].onsubmit = () => true;
     };
     akk.removeAds = () => {
-        akk.log('removeAds');
+        console.log('removeAds');
         $('.adsbygoogle')[0].parentElement.remove();
         $('body > iframe').remove();
     };
@@ -313,7 +306,7 @@ top.akk = (function($) {
         }).text(appid).appendTo(td);
     };
     akk.modTableKeysXT = () => {
-        akk.log('modTableKeysXT');
+        console.log('modTableKeysXT');
         if (location.pathname.includes('tradesXT') || location.pathname.includes('storeXT')) {
             akk.tableKeys = $(akk.sel.rowsTableKeys).toArray().from(2).map((tr) => {
                 let href = tr.children[1].firstElementChild.href;
@@ -356,7 +349,7 @@ top.akk = (function($) {
     };
     akk.getGameTitlesUnique = () => _.values(akk.gameData).map((e) => e.gameTitle).unique();
     akk.Init = (script, textStatus) => {
-        akk.log('Init');
+        console.log('Init');
         let bundleIds = Object.keys(akk.bundles).map((bundleId) => {
             if (!top.loadjs.isDefined(bundleId)) top.loadjs(akk.bundles[bundleId], bundleId);
             return bundleId;
@@ -364,7 +357,7 @@ top.akk = (function($) {
         top.loadjs.ready(bundleIds, akk.Setup);
     };
     akk.Setup = () => {
-        akk.log('Setup');
+        console.log('Setup');
         top.Sugar.extend();
         akk.loadLocalStorage()
             .then(() => akk.checkUserData())
@@ -374,7 +367,7 @@ top.akk = (function($) {
             .then(() => akk.Main())
     };
     akk.Main = () => {
-        akk.log('Main');
+        console.log('Main');
         akk.removeAds();
         akk.modPages();
         akk.modTableKeysAccount();
@@ -382,10 +375,10 @@ top.akk = (function($) {
         akk.updateGameData();
         akk.modTableKeysXT();
         akk.hideGamesOwned();
-        akk.log(akk);
+        console.log(akk);
         console.dir(akk);
     };
     $.getScript(akk.url.loadjs).done(akk.Init)
-        .fail((jqxhr, settings, exception) => akk.err("Triggered ajaxError handler."));
+        .fail((jqxhr, settings, exception) => console.error("Triggered ajaxError handler."));
     return akk;
 })(top.jQuery);
