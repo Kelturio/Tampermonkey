@@ -28,7 +28,9 @@ top.akk = (function($) {
         firstPageParent: '#DIG2TableGray > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td',
         activePage: '#DIG2TableGray > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > a > span.DIG2-TitleOrange2',
         rowsTableKeys: '#TableKeys > tbody > tr',
-        tableKeysRow: '#TableKeys > tbody > tr'
+        tableKeysRow: '#TableKeys > tbody > tr',
+        dig2TableGray: '#DIG2TableGray',
+        bodyTable: 'body > table > tbody > tr > td > table[width=1020]'
     };
     akk.checkUserData = () => {
         console.log('checkUserData');
@@ -318,6 +320,11 @@ top.akk = (function($) {
             });
         }
     };
+    akk.modBodyTable = (url) => {
+        console.log('modBodyTable');
+        $(akk.sel.bodyTable).width('100%');
+        $(akk.sel.dig2TableGray).width('100%');
+    };
     akk.bundles = {
         //'loadjs': ['https://cdnjs.cloudflare.com/ajax/libs/loadjs/3.5.4/loadjs.min.js'],
         'sugar': ['https://cdnjs.cloudflare.com/ajax/libs/sugar/2.0.4/sugar.min.js'],
@@ -360,8 +367,8 @@ top.akk = (function($) {
         console.log('Setup');
         top.Sugar.extend();
         akk.loadLocalStorage()
-            .then(() => akk.checkUserData())
-            .then(() => akk.updateUserData())
+//             .then(() => akk.checkUserData())
+//             .then(() => akk.updateUserData())
             .then(() => akk.saveLocalStorage())
             .catch(() => console.warn('catch'))
             .then(() => akk.Main())
@@ -375,6 +382,7 @@ top.akk = (function($) {
         akk.updateGameData();
         akk.modTableKeysXT();
         akk.hideGamesOwned();
+        akk.modBodyTable();
         console.log(akk);
         console.dir(akk);
     };
