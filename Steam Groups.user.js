@@ -6,14 +6,36 @@
 // @author       Searinox
 // @icon         https://avatars0.githubusercontent.com/u/16297928?s=460&v=4
 // @match        https://steamcommunity.com/groups/*
+// @require      https://cdnjs.cloudflare.com/ajax/libs/loadjs/3.5.4/loadjs.min.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.min.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.2/localforage.min.js
-// @grant        none
+// @grant        GM_getTabs
+// @grant        GM_setValue
+// @grant        GM_getValue
 // ==/UserScript==
 
-(function() {
+top.akk = (function() {
     'use strict';
-    function saveMemberList(groupURL, page) {
+    let akk = {};
+    akk.bundles = {
+        'sugar': ['https://cdnjs.cloudflare.com/ajax/libs/sugar/2.0.4/sugar.min.js'],
+        'blueimp-md5': ['https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js'],
+    };
+    akk.Init = (script, textStatus) => {
+        GM_getTabs((a,b,c) => console.log('GM_getTabs', [a,b,c]));
+        console.log('GM_getValue', GM_getValue('sifte'));
+        return;
+        let bundleIds = Object.keys(akk.bundles).map((bundleId) => {
+            if (!top.loadjs.isDefined(bundleId)) top.loadjs(akk.bundles[bundleId], bundleId);
+            return bundleId;
+        });
+        top.loadjs.ready(bundleIds, akk.Setup);
+    };
+    akk.Setup = () => {
+        console.log('Setup');
+        top.Sugar.extend();
+    };
+    function saveMemberList(groupURL, page = 1) {
         let lastPage = 0;
         let totalPages = 0;
         jQuery.ajax({
@@ -43,24 +65,25 @@
                         lastPage = +data.getElementsByTagName('currentPage')[0].textContent;
                         totalPages = +data.getElementsByTagName('totalPages')[0].textContent;
                         if (lastPage < totalPages) {
-                            lastPage++;
+                            top.lastPage = ++lastPage;
                             top.to = setTimeout(() => saveMemberList(groupURL, lastPage), top.pt);
                         }
                         console.log(`saveMemberList ${groupURL} ${lastPage} / ${totalPages}`);
                     }).catch(console.error);
                 });
-                //localStorage.setItem('memberList', JSON.stringify(memberListDb));
-                //lastPage = +data.getElementsByTagName('currentPage')[0].textContent;
-                //totalPages = +data.getElementsByTagName('totalPages')[0].textContent;
             },
-            error: () => console.error('ajax.error'),
+            error: () => {
+                console.error('ajax.error', [lastPage, top.lastPage, page]);
+            },
             complete: () => {}
         });
     }
     function getAllMembers() {
         return JSON.stringify(_.flatten(_.map(JSON.parse(localStorage.memberList), (e) => e.members)));
     }
-    top.pt = 5e3;
+    top.pt = 3e3;
     top.saveMemberList = saveMemberList;
     top.getAllMembers = getAllMembers;
+    akk.Init();
+    return akk;
 })();
