@@ -9,37 +9,63 @@
 // @grant        none
 // ==/UserScript==
 
-top.akk = (function($) {
+/* global _ */
+/* exported akk */
+
+/* eslint id-length: ["error", { "min": 2 }] */
+/* eslint lines-around-directive: 0 */
+/* eslint max-len: ["error", { "ignoreUrls": true }] */
+/* eslint multiline-comment-style: 0 */
+/* eslint newline-after-var: 0 */
+/* eslint padded-blocks: 0 */
+/* eslint quotes: [2, "single"] */
+/* eslint sort-vars: 0 */
+/* eslint-env browser, es6, greasemonkey */
+
+/* eslint max-lines: ["error", 500] */
+/* eslint max-len: ["error", { "ignoreStrings": true }] */
+/* eslint max-statements: ["error", 10, { "ignoreTopLevelFunctions": true }] */
+/* eslint no-console: ["error", { allow: ["log", "warn", "error"] }] */
+/* eslint newline-before-return: "off" */
+/* eslint no-ternary: "off" */
+/* eslint multiline-ternary: ["error", "always-multiline"] */
+/* eslint dot-location: ["error", "property"] */
+/* eslint no-magic-numbers: ["error", { "ignoreArrayIndexes": true }] */
+/* eslint quote-props: ["error", "consistent-as-needed"] */
+/* eslint id-length: ["error", { "exceptions": ["$"] }] */
+
+top.akk = (function iife ($) {
     'use strict';
-    let akk = {};
+    const akk = {};
+    akk.userDataRefresh = 120e3;
     akk.url = {
-        loadjs: 'https://cdnjs.cloudflare.com/ajax/libs/loadjs/3.5.4/loadjs.min.js',
-        userdata: 'https://store.steampowered.com/dynamicstore/userdata/',
         app: 'http://store.steampowered.com/app/',
-        registerKey: 'https://store.steampowered.com/account/registerkey?key='
+        loadjs: 'https://cdnjs.cloudflare.com/ajax/libs/loadjs/3.5.4/loadjs.min.js',
+        registerKey: 'https://store.steampowered.com/account/registerkey?key=',
+        userdata: 'https://store.steampowered.com/dynamicstore/userdata/'
     };
     akk.sel = {
+        activePage: '#DIG2TableGray > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > a > span.DIG2-TitleOrange2',
+        allPages: '#DIG2TableGray > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > a',
+        bodyTable: 'body > table > tbody > tr > td > table[width=1020]',
+        dig2TableGray: '#DIG2TableGray',
+        firstPage: '#DIG2TableGray > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > a:nth-child(6)',
+        firstPageParent: '#DIG2TableGray > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td',
         hideGamesOwned: [
             '#TableKeys > tbody > tr > td:nth-child(4) > a',
             '#TableKeys > tbody > tr > td:nth-child(2) > a'
         ],
-        allPages: '#DIG2TableGray > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > a',
-        firstPage: '#DIG2TableGray > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > a:nth-child(6)',
-        firstPageParent: '#DIG2TableGray > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td',
-        activePage: '#DIG2TableGray > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > a > span.DIG2-TitleOrange2',
         rowsTableKeys: '#TableKeys > tbody > tr',
-        tableKeysRow: '#TableKeys > tbody > tr',
-        dig2TableGray: '#DIG2TableGray',
-        bodyTable: 'body > table > tbody > tr > td > table[width=1020]'
+        tableKeysRow: '#TableKeys > tbody > tr'
     };
     akk.checkUserData = () => {
-        console.log('checkUserData');
-        return new Promise(function(resolve, reject) {
+        console.error('checkUserData');
+        return new Promise((resolve, reject) => {
             if (akk.userdata_date) {
-                if ((Date.now() - akk.userdata_date) > 120e3) {
+                if (Date.now() - akk.userdata_date > akk.userDataRefresh) {
                     resolve();
                 } else {
-                    reject();
+                    reject(new Error('something bad happened'));
                 }
             } else {
                 resolve();
@@ -48,13 +74,13 @@ top.akk = (function($) {
     };
     akk.updateUserData = () => {
         console.log('updateUserData');
-        return new Promise(function(resolve, reject) {
+        return new Promise((resolve, reject) => {
             $.getJSON(`${akk.url.userdata}?_=${Date.now()}`, (data) => {
-                if (!_.isEmpty(data.rgOwnedApps)) {
-                    _.set(akk, 'userdata', data);
-                } else {
-                    reject();
+                if (_.isEmpty(data.rgOwnedApps)) {
+                    reject(new Error('something bad happened'));
                     console.warn('userdata.rgOwnedApps is empty');
+                } else {
+                    _.set(akk, 'userdata', data);
                 }
                 _.set(akk, 'userdata_date', Date.now());
                 resolve();
@@ -63,43 +89,57 @@ top.akk = (function($) {
     };
     akk.callCb = (cb) => {
         console.log('callCb');
-        if (_.isFunction(cb)) {
-            return cb.call(akk);
-        }
+        return _.isFunction(cb) ? Reflect.apply(cb, akk, []) : false;
     };
-    akk.localStorageKeys = [{key: 'userdata', default: {rgOwnedApps: []}},
-                            {key: 'userdata_date', default: null},
-                            {key: 'blacklist', default: []},
-                            {key: 'gameData', default: {}}];
+    akk.localStorageKeys = [
+        {
+            default: {rgOwnedApps: []},
+            key: 'userdata'
+        },
+        {
+            default: null,
+            key: 'userdata_date'
+        },
+        {
+            default: [],
+            key: 'blacklist'
+        },
+        {
+            default: {},
+            key: 'gameData'
+        }
+    ];
     akk.blacklist = [];
     akk.gameData = {};
     akk.loadLocalStorage = () => {
         console.log('loadLocalStorage');
-        return new Promise(function(resolve, reject) {
+        return new Promise((resolve, reject) => {
             akk.localStorageKeys.map((e, i) => {
-                top.localforage.getItem(e.key).then(function(value) {
-                    if (!value){
+                top.localforage.getItem(e.key).then((value) => {
+                    if (!value) {
                         console.warn('loadLocalStorage', e.key);
                     }
                     if (_.isNull(_.set(akk, e.key, value)[e.key])) {
                         _.set(akk, e.key, e.default);
                     }
-                    if (i === akk.localStorageKeys.length - 1) {
+                    if (i === akk.localStorageKeys.length - 1) { // eslint-disable-line no-magic-numbers
                         resolve();
                     }
-                }).catch(console.error);
+                })
+                    .catch(console.error);
             });
         });
-        /*return akk.localStorageKeys.map((key) => {
+        /* return akk.localStorageKeys.map((key) => {
             akk[e.key] = JSON.parse(localStorage.getItem(e.key));
         });*/
     };
     akk.saveLocalStorage = () => {
         console.log('saveLocalStorage');
-        return new Promise(function(resolve, reject) {
+        return new Promise((resolve, reject) => {
             akk.localStorageKeys.map((e, i) => {
                 if (akk[e.key]) {
-                    top.localforage.setItem(e.key, akk[e.key]).then(console.log).catch(console.error);
+                    top.localforage.setItem(e.key, akk[e.key]).then(console.log)
+                        .catch(console.error);
                 } else {
                     console.error('saveLocalStorage'.concat(' ', e.key));
                 }
@@ -108,7 +148,7 @@ top.akk = (function($) {
                 }
             });
         });
-        //return akk.localStorageKeys.map((e.key) => localStorage.setItem(e.key, JSON.stringify(akk[e.key])));
+        // return akk.localStorageKeys.map((e.key) => localStorage.setItem(e.key, JSON.stringify(akk[e.key])));
     };
     akk.addBlacklist = (appid) => {
         console.log('addBlacklist', appid);
@@ -121,18 +161,14 @@ top.akk = (function($) {
     akk.getOwnedApps = () => {
         return akk.userdata.rgOwnedApps.concat(akk.blacklist);
     };
-    akk.getAppidFromUrl = (url) => {
-        return (Object.isString(url)) ? +url.split('steampowered').last().split('/')[2] : '';
-    };
+    akk.getAppidFromUrl = (url) => (Object.isString(url)) ? +url.split('steampowered').last().split('/')[2] : '';
     akk.hideGamesOwned = () => {
         console.log('hideGamesOwned');
         akk.sel.hideGamesOwned.map((sel) => $(sel).toArray()).flatten()
-            .map((e) => {
-            return {
+            .map((e) => ({
                 el: e,
                 id: akk.getAppidFromUrl(e.href)
-            };
-        })
+            }))
             .filter((e) => akk.getOwnedApps().includes(e.id))
             .map((e) => {
             e.el.parentElement.parentElement.style.display = 'none';
@@ -152,22 +188,32 @@ top.akk = (function($) {
     };
     akk.newPagesProps = [
         {
-            text: '|<<<',
+            text: '|<<<', // eslint-disable-next-line sort-keys
             href: () => akk.oldPages.first().href
         },
         {
-            text: '<<<',
-            href: () => (akk.activePage.previousElementSibling && akk.activePage.previousElementSibling.nodeName !== 'BR' &&
-                         Number.isFinite(+akk.activePage.previousElementSibling.innerText)) ?
-            akk.activePage.previousElementSibling : akk.oldPages.first().href
+            text: '<<<', // eslint-disable-next-line sort-keys
+            href: () => { // eslint-disable-line arrow-body-style
+                return akk.activePage.previousElementSibling &&
+                       akk.activePage.previousElementSibling.nodeName !== 'BR' &&
+                       Number.isFinite(Number(akk.activePage
+                           .previousElementSibling.innerText))
+                    ? akk.activePage.previousElementSibling
+                    : akk.oldPages.first().href;
+            }
         },
         {
-            text: '>>>',
-            href: () => (akk.activePage.nextElementSibling && Number.isFinite(+akk.activePage.nextElementSibling.innerText)) ?
-            akk.activePage.nextElementSibling.href : akk.oldPages.last().href
+            text: '>>>', // eslint-disable-next-line sort-keys
+            href: () => { // eslint-disable-line arrow-body-style
+                return akk.activePage.nextElementSibling &&
+                       Number.isFinite(Number(akk.activePage
+                           .nextElementSibling.innerText))
+                    ? akk.activePage.nextElementSibling.href
+                    : akk.oldPages.last().href
+            }
         },
         {
-            text: '>>>|',
+            text: '>>>|', // eslint-disable-next-line sort-keys
             href: () => akk.oldPages.last().href
         }
     ];
@@ -236,11 +282,12 @@ top.akk = (function($) {
                     ts: Date.now()
                 };
             } else if (location.pathname.includes('tradesXT') || location.pathname.includes('storeXT')) {
+                /* eslint-disable-next-line sort-keys */
                 cols = {
                     no: parseInt(cols[0].textContent),
                     gameTitle: cols[1].textContent,
                     //gameUrl: cols[1].children[0] && cols[1].children[0].href,
-                    gameId: cols[1].children[0] && akk.getAppidFromUrl(cols[1].children[0].href),
+                    'gameId': cols[1].children[0] && akk.getAppidFromUrl(cols[1].children[0].href),
                     regionLock: cols[2].textContent.compact(),
                     comment: cols[3].textContent,
                     card: cols[4].textContent.includes('YES'),
@@ -249,7 +296,7 @@ top.akk = (function($) {
                     publisher: cols[6].textContent,
                     //pricePoints: parseInt(cols[7].textContent.replace('DIG Points', '').compact()),
                     //pricePoints: +(parseFloat(cols[7].textContent.replace('$', '')) * 100),
-                    priceUSD: parseFloat(cols[7].textContent.replace('$', '')),
+                    'priceUSD': parseFloat(cols[7].textContent.replace('$', '')),
                     //buy: cols[8].children[0] && cols[8].children[0].href.replace(location.origin, ''),
                     buyId: +cols[8].children[0] && cols[8].children[0].href.replace(/\D+/g, ''),
                     buyTrade: cols[8].children[0] && cols[8].children[0].href.includes('buytrade'),
@@ -367,11 +414,11 @@ top.akk = (function($) {
         console.log('Setup');
         top.Sugar.extend();
         akk.loadLocalStorage()
-//             .then(() => akk.checkUserData())
-//             .then(() => akk.updateUserData())
+        //  .then(() => akk.checkUserData())
+        //  .then(() => akk.updateUserData())
             .then(() => akk.saveLocalStorage())
             .catch(() => console.warn('catch'))
-            .then(() => akk.Main())
+            .then(() => akk.Main());
     };
     akk.Main = () => {
         console.log('Main');
@@ -387,6 +434,6 @@ top.akk = (function($) {
         console.dir(akk);
     };
     $.getScript(akk.url.loadjs).done(akk.Init)
-        .fail((jqxhr, settings, exception) => console.error("Triggered ajaxError handler."));
+        .fail((jqxhr, settings, exception) => console.error('Triggered ajaxError handler.'));
     return akk;
-})(top.jQuery);
+}(top.jQuery));
