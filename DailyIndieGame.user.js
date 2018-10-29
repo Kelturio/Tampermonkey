@@ -46,19 +46,32 @@
 /* eslint no-mixed-operators: "error" */
 /* eslint semi:
           ["error", "never", { "beforeStatementContinuationChars": "always"}] */
-
+/* eslint indent: ["error", 2,
+          { "VariableDeclarator": { "var": 2,
+                                    "let": 1,
+                                    "const": 2 } }] */
+/* eslint indent-legacy: "off" */
+/* eslint comma-style: ["error", "first",
+          { "exceptions": { "ArrayExpression": true,
+                            "ObjectExpression": true } }]*/
 
 top.akk = (function iife ($) {
-    'use strict'
-    const akk = {}
-    akk.userDataRefresh = 120e3
-    akk.minRowLenUpdGameData = 2
-    akk.url = {
-        app: 'http://store.steampowered.com/app/',
-        loadjs: 'https://cdnjs.cloudflare.com/ajax/libs/loadjs/3.5.4/loadjs.min.js',
-        registerKey: 'https://store.steampowered.com/account/registerkey?key=',
-        userdata: 'https://store.steampowered.com/dynamicstore/userdata/'
-    }
+  'use strict'
+  const akk = {}
+      , sifte = 1
+  let werner = 2
+    , knecht = 3
+  sifte = werner + knecht
+  werner = sifte + knecht
+  knecht = sifte + werner
+  akk.userDataRefresh = 120e3
+  akk.minRowLenUpdGameData = 2
+  akk.url = {
+    app: 'http://store.steampowered.com/app/',
+    loadjs: 'https://cdnjs.cloudflare.com/ajax/libs/loadjs/3.5.4/loadjs.min.js',
+    registerKey: 'https://store.steampowered.com/account/registerkey?key=',
+    userdata: 'https://store.steampowered.com/dynamicstore/userdata/'
+  }
     akk.sel = {
         activePage: '#DIG2TableGray > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > a > span.DIG2-TitleOrange2',
         allPages: '#DIG2TableGray > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > a',
@@ -130,19 +143,19 @@ top.akk = (function iife ($) {
         console.log('loadLocalStorage')
         return new Promise((resolve) => {
             akk.localStorageKeys.map((cv, i) => top.localforage.getItem(cv.key)
-                .then((value) => {
-                    if (!value) {
-                        console.warn('loadLocalStorage', cv.key)
-                    }
-                    if (_.isNull(_.set(akk, cv.key, value)[cv.key])) {
-                        _.set(akk, cv.key, cv.default)
-                    }
-                    /* eslint-disable-next-line no-magic-numbers */
-                    if (i === akk.localStorageKeys.length - 1) {
-                        resolve()
-                    }
-                })
-                .catch(console.error))
+                                     .then((value) => {
+                if (!value) {
+                    console.warn('loadLocalStorage', cv.key)
+                }
+                if (_.isNull(_.set(akk, cv.key, value)[cv.key])) {
+                    _.set(akk, cv.key, cv.default)
+                }
+                /* eslint-disable-next-line no-magic-numbers */
+                if (i === akk.localStorageKeys.length - 1) {
+                    resolve()
+                }
+            })
+                                     .catch(console.error))
         })
     }
     akk.saveLocalStorage = () => {
@@ -170,19 +183,19 @@ top.akk = (function iife ($) {
         return akk.saveLocalStorage()
     }
     akk.removeBlacklist = (appid) => akk.saveLocalStorage(akk
-        .blacklist.remove(appid))
+                                                          .blacklist.remove(appid))
     akk.getOwnedApps = () => akk.userdata.rgOwnedApps.concat(akk.blacklist)
     akk.getAppidFromUrl = (url) => (Object.isString(url)
-        ? Number(url.split('steampowered').last()
-            .split('/')[2])
-        : '')
+                                    ? Number(url.split('steampowered').last()
+                                             .split('/')[2])
+                                    : '')
     akk.hideGamesOwned = () => {
         console.log('hideGamesOwned')
         akk.sel.hideGamesOwned.map((sel) => $(sel).toArray()).flatten()
             .map((cv) => ({
-                el: cv,
-                id: akk.getAppidFromUrl(cv.href)
-            }))
+            el: cv,
+            id: akk.getAppidFromUrl(cv.href)
+        }))
             .filter((cv) => akk.getOwnedApps().includes(cv.id))
             .map((cv) => (cv.el.parentElement.parentElement.style.display = 'none'))
     }
@@ -209,11 +222,11 @@ top.akk = (function iife ($) {
             /* eslint-disable-next-line sort-keys, arrow-body-style */
             href: () => {
                 return akk.activePage.previousElementSibling &&
-                       akk.activePage.previousElementSibling.nodeName !== 'BR' &&
-                       Number.isFinite(Number(akk.activePage
-                           .previousElementSibling.innerText))
+                    akk.activePage.previousElementSibling.nodeName !== 'BR' &&
+                    Number.isFinite(Number(akk.activePage
+                                           .previousElementSibling.innerText))
                     ? akk.activePage.previousElementSibling
-                    : akk.oldPages.first().href
+                : akk.oldPages.first().href
             }
         },
         {
@@ -221,10 +234,10 @@ top.akk = (function iife ($) {
             /* eslint-disable-next-line sort-keys, arrow-body-style */
             href: () => {
                 return akk.activePage.nextElementSibling &&
-                       Number.isFinite(Number(akk.activePage
-                           .nextElementSibling.innerText))
+                    Number.isFinite(Number(akk.activePage
+                                           .nextElementSibling.innerText))
                     ? akk.activePage.nextElementSibling.href
-                    : akk.oldPages.last().href
+                : akk.oldPages.last().href
             }
         },
         {
@@ -256,23 +269,23 @@ top.akk = (function iife ($) {
         console.log('modTableKeysAccount')
         if (!location.pathname.includes('account_page')) { return }
         _.set(akk, 'tableKeys', $(akk.sel.rowsTableKeys).toArray()
-            /* eslint-disable-next-line no-magic-numbers */
-            .from(1)
-            .map((tr) => {
-                const key = tr.children[4].innerText,
-                    td = $('<td/>').attr('valign', 'top')
-                        .appendTo(tr),
-                    anchor = $('<a/>').attr('href', akk.url.registerKey.concat(key))
-                        .appendTo(td)
-                $('<span/>').addClass('DIG3_14_White')
-                    .text('Activate Key')
-                    .appendTo(anchor)
-                akk.addButtonBlacklist(tr, akk.addGameUrl(tr.children[2]))
-                return {
-                    key,
-                    tr
-                }
-            }))
+              /* eslint-disable-next-line no-magic-numbers */
+              .from(1)
+              .map((tr) => {
+            const key = tr.children[4].innerText,
+                  td = $('<td/>').attr('valign', 'top')
+            .appendTo(tr),
+                  anchor = $('<a/>').attr('href', akk.url.registerKey.concat(key))
+            .appendTo(td)
+            $('<span/>').addClass('DIG3_14_White')
+                .text('Activate Key')
+                .appendTo(anchor)
+            akk.addButtonBlacklist(tr, akk.addGameUrl(tr.children[2]))
+            return {
+                key,
+                tr
+            }
+        }))
     }
     akk.updateGameDataMd5Blacklist = ['d58ba90acecfed7e6900bff6029f644b']
     /* eslint-disable-next-line max-lines-per-function, max-statements */
@@ -328,7 +341,7 @@ top.akk = (function iife ($) {
             return cols
         })
         const rowsObj = {},
-            bl = akk.updateGameDataMd5Blacklist
+              bl = akk.updateGameDataMd5Blacklist
         /* eslint-disable-next-line no-magic-numbers */
         rows.from(1).filter((row) => !(!row.gameUrl && bl.includes(row.md5)))
             .map((row) => _.set(rowsObj, row.md5, row))
@@ -358,11 +371,11 @@ top.akk = (function iife ($) {
     }
     akk.addGameUrl = (td) => {
         let href = _.values(akk.gameData)
-            .filter((cv) => _.get(cv, 'gameTitle', '').includes(td.textContent.compact()))
+        .filter((cv) => _.get(cv, 'gameTitle', '').includes(td.textContent.compact()))
         if (!href.length) { return false }
         href = akk.url.app.concat(href.first().gameId)
         const anchor = $('<a/>').attr('href', href)
-            .appendTo(td)
+        .appendTo(td)
         $('<span/>').text(td.textContent)
             .appendTo(anchor)
         td.firstChild.remove()
@@ -370,8 +383,8 @@ top.akk = (function iife ($) {
     }
     akk.addButtonBlacklist = (tr, href) => {
         const appid = akk.getAppidFromUrl(href),
-            td = $('<td/>').attr('valign', 'top')
-                .appendTo(tr)
+              td = $('<td/>').attr('valign', 'top')
+        .appendTo(tr)
         $('<span/>', {
             on: {
                 click: () => {
@@ -387,16 +400,16 @@ top.akk = (function iife ($) {
         if (location.pathname.includes('tradesXT') ||
             location.pathname.includes('storeXT')) {
             akk.tableKeys = $(akk.sel.rowsTableKeys).toArray()
-                /* eslint-disable-next-line no-magic-numbers */
+            /* eslint-disable-next-line no-magic-numbers */
                 .from(2)
                 .map((tr) => {
-                    const {href} = tr.children[1].firstElementChild
-                    akk.addButtonBlacklist(tr, href)
-                    return {
-                        href,
-                        tr
-                    }
-                })
+                const {href} = tr.children[1].firstElementChild
+                akk.addButtonBlacklist(tr, href)
+                return {
+                    href,
+                    tr
+                }
+            })
         }
     }
     akk.modBodyTable = () => {
