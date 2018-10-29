@@ -44,20 +44,21 @@
                              "nestedBinaryExpressions": false}] */
 /* eslint no-return-assign: ["error", "except-parens"] */
 /* eslint no-mixed-operators: "error" */
-/* eslint semi: ["error", "never", { "beforeStatementContinuationChars": "always"}] */
+/* eslint semi:
+          ["error", "never", { "beforeStatementContinuationChars": "always"}] */
 
 
 top.akk = (function iife ($) {
-    'use strict';
-    const akk = {};
-    akk.userDataRefresh = 120e3;
-    akk.minRowLenUpdGameData = 2;
+    'use strict'
+    const akk = {}
+    akk.userDataRefresh = 120e3
+    akk.minRowLenUpdGameData = 2
     akk.url = {
         app: 'http://store.steampowered.com/app/',
         loadjs: 'https://cdnjs.cloudflare.com/ajax/libs/loadjs/3.5.4/loadjs.min.js',
         registerKey: 'https://store.steampowered.com/account/registerkey?key=',
         userdata: 'https://store.steampowered.com/dynamicstore/userdata/'
-    };
+    }
     akk.sel = {
         activePage: '#DIG2TableGray > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > a > span.DIG2-TitleOrange2',
         allPages: '#DIG2TableGray > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > a',
@@ -71,40 +72,40 @@ top.akk = (function iife ($) {
         ],
         rowsTableKeys: '#TableKeys > tbody > tr',
         tableKeysRow: '#TableKeys > tbody > tr'
-    };
+    }
     akk.checkUserData = () => {
-        console.error('checkUserData');
+        console.error('checkUserData')
         return new Promise((resolve, reject) => {
             if (akk.userdata_date) {
                 if (Date.now() - akk.userdata_date > akk.userDataRefresh) {
-                    resolve();
+                    resolve()
                 } else {
-                    reject(new Error('something bad happened'));
+                    reject(new Error('something bad happened'))
                 }
             } else {
-                resolve();
+                resolve()
             }
-        });
-    };
+        })
+    }
     akk.updateUserData = () => {
-        console.log('updateUserData');
+        console.log('updateUserData')
         return new Promise((resolve, reject) => {
             $.getJSON(`${akk.url.userdata}?_=${Date.now()}`, (data) => {
                 if (_.isEmpty(data.rgOwnedApps)) {
-                    reject(new Error('something bad happened'));
-                    console.warn('userdata.rgOwnedApps is empty');
+                    reject(new Error('something bad happened'))
+                    console.warn('userdata.rgOwnedApps is empty')
                 } else {
-                    _.set(akk, 'userdata', data);
+                    _.set(akk, 'userdata', data)
                 }
-                _.set(akk, 'userdata_date', Date.now());
-                resolve();
-            });
-        });
-    };
+                _.set(akk, 'userdata_date', Date.now())
+                resolve()
+            })
+        })
+    }
     akk.callCb = (cb) => {
-        console.log('callCb');
-        return _.isFunction(cb) ? Reflect.apply(cb, akk, []) : false;
-    };
+        console.log('callCb')
+        return _.isFunction(cb) ? Reflect.apply(cb, akk, []) : false
+    }
     akk.localStorageKeys = [
         {
             default: {rgOwnedApps: []},
@@ -122,81 +123,81 @@ top.akk = (function iife ($) {
             default: {},
             key: 'gameData'
         }
-    ];
-    akk.blacklist = [];
-    akk.gameData = {};
+    ]
+    akk.blacklist = []
+    akk.gameData = {}
     akk.loadLocalStorage = () => {
-        console.log('loadLocalStorage');
+        console.log('loadLocalStorage')
         return new Promise((resolve) => {
             akk.localStorageKeys.map((cv, i) => top.localforage.getItem(cv.key)
                 .then((value) => {
                     if (!value) {
-                        console.warn('loadLocalStorage', cv.key);
+                        console.warn('loadLocalStorage', cv.key)
                     }
                     if (_.isNull(_.set(akk, cv.key, value)[cv.key])) {
-                        _.set(akk, cv.key, cv.default);
+                        _.set(akk, cv.key, cv.default)
                     }
                     /* eslint-disable-next-line no-magic-numbers */
                     if (i === akk.localStorageKeys.length - 1) {
-                        resolve();
+                        resolve()
                     }
                 })
-                .catch(console.error));
-        });
-    };
+                .catch(console.error))
+        })
+    }
     akk.saveLocalStorage = () => {
-        console.log('saveLocalStorage');
+        console.log('saveLocalStorage')
         return new Promise((resolve) => {
             akk.localStorageKeys.map((cv, i) => {
                 if (akk[cv.key]) {
                     top.localforage.setItem(cv.key, akk[cv.key])
                         .then(console.log)
-                        .catch(console.error);
+                        .catch(console.error)
                 } else {
-                    console.error('saveLocalStorage'.concat(' ', cv.key));
+                    console.error('saveLocalStorage'.concat(' ', cv.key))
                 }
                 /* eslint-disable-next-line no-magic-numbers */
                 if (i === akk.localStorageKeys.length - 1) {
-                    resolve();
+                    resolve()
                 }
-                return null;
-            });
-        });
-    };
+                return null
+            })
+        })
+    }
     akk.addBlacklist = (appid) => {
-        console.log('addBlacklist', appid);
-        akk.blacklist = akk.blacklist.add(appid);
-        return akk.saveLocalStorage();
-    };
+        console.log('addBlacklist', appid)
+        akk.blacklist = akk.blacklist.add(appid)
+        return akk.saveLocalStorage()
+    }
     akk.removeBlacklist = (appid) => akk.saveLocalStorage(akk
-        .blacklist.remove(appid));
-    akk.getOwnedApps = () => akk.userdata.rgOwnedApps.concat(akk.blacklist);
+        .blacklist.remove(appid))
+    akk.getOwnedApps = () => akk.userdata.rgOwnedApps.concat(akk.blacklist)
     akk.getAppidFromUrl = (url) => (Object.isString(url)
         ? Number(url.split('steampowered').last()
             .split('/')[2])
-        : '');
+        : '')
     akk.hideGamesOwned = () => {
-        console.log('hideGamesOwned');
+        console.log('hideGamesOwned')
         akk.sel.hideGamesOwned.map((sel) => $(sel).toArray()).flatten()
             .map((cv) => ({
                 el: cv,
                 id: akk.getAppidFromUrl(cv.href)
             }))
             .filter((cv) => akk.getOwnedApps().includes(cv.id))
-            .map((cv) => (cv.el.parentElement.parentElement.style.display = 'none'));
-    };
+            .map((cv) => (cv.el.parentElement.parentElement.style.display = 'none'))
+    }
     akk.getPages = () => {
-        console.log('getPages');
-        return $(akk.sel.allPages);
-    };
+        console.log('getPages')
+        return $(akk.sel.allPages)
+    }
     akk.appendClone = (target, destination) => {
-        console.log('appendClone');
-        return destination.append(target.clone())[0].lastChild;
-    };
+        console.log('appendClone')
+        return destination.append(target.clone())[0].lastChild
+    }
     akk.appendCloneSel = (target, destination) => {
-        console.log('appendCloneSel');
-        return $(destination).append($(target).clone())[0].lastChild;
-    };
+        console.log('appendCloneSel')
+        return $(destination).append($(target).clone())[0].lastChild
+    }
     akk.newPagesProps = [
         {
             text: '|<<<',
@@ -212,7 +213,7 @@ top.akk = (function iife ($) {
                        Number.isFinite(Number(akk.activePage
                            .previousElementSibling.innerText))
                     ? akk.activePage.previousElementSibling
-                    : akk.oldPages.first().href;
+                    : akk.oldPages.first().href
             }
         },
         {
@@ -223,7 +224,7 @@ top.akk = (function iife ($) {
                        Number.isFinite(Number(akk.activePage
                            .nextElementSibling.innerText))
                     ? akk.activePage.nextElementSibling.href
-                    : akk.oldPages.last().href;
+                    : akk.oldPages.last().href
             }
         },
         {
@@ -231,29 +232,29 @@ top.akk = (function iife ($) {
             /* eslint-disable-next-line sort-keys */
             href: () => akk.oldPages.last().href
         }
-    ];
+    ]
     akk.modPages = () => {
-        console.log('modPages');
-        _.set(akk, 'activePage', $(akk.sel.activePage)[0]);
-        const pages = akk.getPages();
-        if (!pages.length || !akk.activePage) { return; }
-        _.set(akk, 'activePage', akk.activePage.parentElement);
-        _.set(akk, 'oldPages', pages.toArray());
+        console.log('modPages')
+        _.set(akk, 'activePage', $(akk.sel.activePage)[0])
+        const pages = akk.getPages()
+        if (!pages.length || !akk.activePage) { return }
+        _.set(akk, 'activePage', akk.activePage.parentElement)
+        _.set(akk, 'oldPages', pages.toArray())
         _.set(akk, 'newPages', akk.newPagesProps.map((cv) => {
             const clone = akk.appendCloneSel(
                 akk.sel.firstPage,
                 akk.sel.firstPageParent
-            );
-            clone.firstElementChild.innerText = cv.text;
-            clone.href = cv.href();
-            clone.firstElementChild.className = 'DIG2contentSite';
-            return clone;
-        }));
-        pages.appendTo($(akk.sel.firstPageParent));
-    };
+            )
+            clone.firstElementChild.innerText = cv.text
+            clone.href = cv.href()
+            clone.firstElementChild.className = 'DIG2contentSite'
+            return clone
+        }))
+        pages.appendTo($(akk.sel.firstPageParent))
+    }
     akk.modTableKeysAccount = () => {
-        console.log('modTableKeysAccount');
-        if (!location.pathname.includes('account_page')) { return; }
+        console.log('modTableKeysAccount')
+        if (!location.pathname.includes('account_page')) { return }
         _.set(akk, 'tableKeys', $(akk.sel.rowsTableKeys).toArray()
             /* eslint-disable-next-line no-magic-numbers */
             .from(1)
@@ -262,29 +263,29 @@ top.akk = (function iife ($) {
                     td = $('<td/>').attr('valign', 'top')
                         .appendTo(tr),
                     anchor = $('<a/>').attr('href', akk.url.registerKey.concat(key))
-                        .appendTo(td);
+                        .appendTo(td)
                 $('<span/>').addClass('DIG3_14_White')
                     .text('Activate Key')
-                    .appendTo(anchor);
-                akk.addButtonBlacklist(tr, akk.addGameUrl(tr.children[2]));
+                    .appendTo(anchor)
+                akk.addButtonBlacklist(tr, akk.addGameUrl(tr.children[2]))
                 return {
                     key,
                     tr
-                };
-            }));
-    };
-    akk.updateGameDataMd5Blacklist = ['d58ba90acecfed7e6900bff6029f644b'];
+                }
+            }))
+    }
+    akk.updateGameDataMd5Blacklist = ['d58ba90acecfed7e6900bff6029f644b']
     /* eslint-disable-next-line max-lines-per-function, max-statements */
     akk.updateGameData = () => {
-        console.log('updateGameData');
-        let rows = $(akk.sel.tableKeysRow).toArray();
+        console.log('updateGameData')
+        let rows = $(akk.sel.tableKeysRow).toArray()
         if (rows.length < akk.minRowLenUpdGameData ||
             (!location.pathname.includes('digstore') && !location.pathname.includes('store_updateshowdlc') &&
              !location.pathname.includes('tradesXT') && !location.pathname.includes('storeXT'))) {
-            return [];
+            return []
         }
         rows = rows.map((row) => {
-            let cols = _.toArray(row.children);
+            let cols = _.toArray(row.children)
             if (location.pathname.includes('digstore') || location.pathname.includes('store_updateshowdlc')) {
                 cols = {
                     /* eslint-disable sort-keys */
@@ -304,7 +305,7 @@ top.akk = (function iife ($) {
                     buyTrade: cols[12].children[0] && cols[12].children[0].href.includes('buytrade'),
                     ts: Date.now()
                     /* eslint-enable sort-keys */
-                };
+                }
             } else if (location.pathname.includes('tradesXT') || location.pathname.includes('storeXT')) {
                 cols = {
                     /* eslint-disable sort-keys */
@@ -321,88 +322,88 @@ top.akk = (function iife ($) {
                     buyTrade: cols[8].children[0] && cols[8].children[0].href.includes('buytrade'),
                     ts: Date.now()
                     /* eslint-enable sort-keys */
-                };
-            } else { console.error('updateGameData.rows.cols'); }
-            cols = akk.addChecksumObj(cols);
-            return cols;
-        });
+                }
+            } else { console.error('updateGameData.rows.cols') }
+            cols = akk.addChecksumObj(cols)
+            return cols
+        })
         const rowsObj = {},
-            bl = akk.updateGameDataMd5Blacklist;
+            bl = akk.updateGameDataMd5Blacklist
         /* eslint-disable-next-line no-magic-numbers */
         rows.from(1).filter((row) => !(!row.gameUrl && bl.includes(row.md5)))
-            .map((row) => _.set(rowsObj, row.md5, row));
-        _.set(akk, 'gameDataNew', rowsObj);
-        console.log(_.size(akk.gameData), 'before merge');
-        Object.merge(akk.gameData, akk.gameDataNew);
-        console.log(_.size(akk.gameData), 'after merge');
-        akk.saveLocalStorage();
-        return rows;
-    };
+            .map((row) => _.set(rowsObj, row.md5, row))
+        _.set(akk, 'gameDataNew', rowsObj)
+        console.log(_.size(akk.gameData), 'before merge')
+        Object.merge(akk.gameData, akk.gameDataNew)
+        console.log(_.size(akk.gameData), 'after merge')
+        akk.saveLocalStorage()
+        return rows
+    }
     akk.addChecksumObj = (obj) => _.set(obj, 'md5', top.md5(JSON.stringify(Object.reject(obj, [
         'no',
         'ts',
         'md5'
-    ]))));
+    ]))))
     akk.modDPSform = () => {
-        console.log('modDPSform');
-        if (!location.pathname.includes('account_buy')) { return; }
+        console.log('modDPSform')
+        if (!location.pathname.includes('account_buy')) { return }
         if ($('#DPSform')[0] && $('#DPSform')[0].onsubmit) {
-            $('#DPSform')[0].onsubmit = () => true;
+            $('#DPSform')[0].onsubmit = () => true
         }
-    };
+    }
     akk.removeAds = () => {
-        console.log('removeAds');
-        $('.adsbygoogle')[0].parentElement.remove();
-        $('body > iframe').remove();
-    };
+        console.log('removeAds')
+        $('.adsbygoogle')[0].parentElement.remove()
+        $('body > iframe').remove()
+    }
     akk.addGameUrl = (td) => {
         let href = _.values(akk.gameData)
-            .filter((cv) => _.get(cv, 'gameTitle', '').includes(td.textContent.compact()));
-        if (!href.length) { return false; }
-        href = akk.url.app.concat(href.first().gameId);
+            .filter((cv) => _.get(cv, 'gameTitle', '').includes(td.textContent.compact()))
+        if (!href.length) { return false }
+        href = akk.url.app.concat(href.first().gameId)
         const anchor = $('<a/>').attr('href', href)
-            .appendTo(td);
+            .appendTo(td)
         $('<span/>').text(td.textContent)
-            .appendTo(anchor);
-        td.firstChild.remove();
-        return href;
-    };
+            .appendTo(anchor)
+        td.firstChild.remove()
+        return href
+    }
     akk.addButtonBlacklist = (tr, href) => {
         const appid = akk.getAppidFromUrl(href),
             td = $('<td/>').attr('valign', 'top')
-                .appendTo(tr);
+                .appendTo(tr)
         $('<span/>', {
             on: {
                 click: () => {
-                    console.log(`click ${appid}`);
-                    akk.addBlacklist(appid);
+                    console.log(`click ${appid}`)
+                    akk.addBlacklist(appid)
                 }
             }
         }).text(appid)
-            .appendTo(td);
-    };
+            .appendTo(td)
+    }
     akk.modTableKeysXT = () => {
-        console.log('modTableKeysXT');
+        console.log('modTableKeysXT')
         if (location.pathname.includes('tradesXT') ||
             location.pathname.includes('storeXT')) {
             akk.tableKeys = $(akk.sel.rowsTableKeys).toArray()
                 /* eslint-disable-next-line no-magic-numbers */
                 .from(2)
                 .map((tr) => {
-                    const {href} = tr.children[1].firstElementChild;
-                    akk.addButtonBlacklist(tr, href);
+                    const {href} = tr.children[1].firstElementChild
+                    akk.addButtonBlacklist(tr, href)
                     return {
                         href,
                         tr
-                    };
-                });
+                    }
+                })
         }
-    };
+    }
     akk.modBodyTable = () => {
-        console.log('modBodyTable');
-        $(akk.sel.bodyTable).width('100%');
-        $(akk.sel.dig2TableGray).width('100%');
-    };
+        console.log('modBodyTable')
+        $(akk.sel.bodyTable).width('100%')
+        $(akk.sel.dig2TableGray).width('100%')
+    }
     akk.bundles = {
         /* eslint-disable sort-keys */
         'sugar': ['https://cdnjs.cloudflare.com/ajax/libs/sugar/2.0.4/sugar.min.js'],
@@ -411,7 +412,7 @@ top.akk = (function iife ($) {
         'localforage': ['https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.2/localforage.min.js'],
         'blueimp-md5': ['https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js']
         /* eslint-enable sort-keys */
-    };
+    }
 
     /* Temp
     akk.cleanGameData = () => {
@@ -440,43 +441,43 @@ top.akk = (function iife ($) {
     */
     akk.getGameTitlesUnique = () => _
         .values(akk.gameData).map((cv) => cv.gameTitle)
-        .unique();
+        .unique()
     akk.Init = (script, textStatus) => {
-        console.log(`Init ${script} ${textStatus}`);
+        console.log(`Init ${script} ${textStatus}`)
         const bundleIds = Object.keys(akk.bundles).map((bundleId) => {
             if (!top.loadjs.isDefined(bundleId)) {
-                top.loadjs(akk.bundles[bundleId], bundleId);
+                top.loadjs(akk.bundles[bundleId], bundleId)
             }
-            return bundleId;
-        });
-        top.loadjs.ready(bundleIds, akk.Setup);
-    };
+            return bundleId
+        })
+        top.loadjs.ready(bundleIds, akk.Setup)
+    }
     akk.Setup = () => {
-        console.log('Setup');
-        top.Sugar.extend();
+        console.log('Setup')
+        top.Sugar.extend()
         akk.loadLocalStorage()
         //  .then(() => akk.checkUserData())
         //  .then(() => akk.updateUserData())
             .then(() => akk.saveLocalStorage())
             .catch(() => console.warn('catch'))
-            .then(() => akk.main());
-    };
+            .then(() => akk.main())
+    }
     /* eslint-disable-next-line max-statements */
     akk.main = () => {
-        console.log('main');
-        akk.removeAds();
-        akk.modPages();
-        akk.modTableKeysAccount();
-        akk.modDPSform();
-        akk.updateGameData();
-        akk.modTableKeysXT();
-        akk.hideGamesOwned();
-        akk.modBodyTable();
-        console.log(akk);
+        console.log('main')
+        akk.removeAds()
+        akk.modPages()
+        akk.modTableKeysAccount()
+        akk.modDPSform()
+        akk.updateGameData()
+        akk.modTableKeysXT()
+        akk.hideGamesOwned()
+        akk.modBodyTable()
+        console.log(akk)
         /* eslint-disable-next-line no-console */
-        console.dir(akk);
-    };
+        console.dir(akk)
+    }
     $.getScript(akk.url.loadjs).done(akk.Init)
-        .fail((...args) => console.error('Triggered ajaxError handler.', args));
-    return akk;
-}(top.jQuery));
+        .fail((...args) => console.error('Triggered ajaxError handler.', args))
+    return akk
+}(top.jQuery))
