@@ -44,6 +44,7 @@
                              "nestedBinaryExpressions": false}] */
 /* eslint no-return-assign: ["error", "except-parens"] */
 /* eslint no-mixed-operators: "error" */
+/* eslint semi: ["error", "never", { "beforeStatementContinuationChars": "always"}] */
 
 
 top.akk = (function iife ($) {
@@ -402,13 +403,16 @@ top.akk = (function iife ($) {
         $(akk.sel.bodyTable).width('100%');
         $(akk.sel.dig2TableGray).width('100%');
     };
-    akk.bundles = { /* eslint-disable sort-keys */
+    akk.bundles = {
+        /* eslint-disable sort-keys */
         'sugar': ['https://cdnjs.cloudflare.com/ajax/libs/sugar/2.0.4/sugar.min.js'],
         'lodash': ['https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.min.js'],
         'ramda': ['https://cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js'],
         'localforage': ['https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.2/localforage.min.js'],
         'blueimp-md5': ['https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js']
-    }; /* eslint-enable sort-keys */
+        /* eslint-enable sort-keys */
+    };
+
     /* Temp
     akk.cleanGameData = () => {
         let gameDataNew = {};
