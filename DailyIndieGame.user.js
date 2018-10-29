@@ -39,9 +39,11 @@
 /* eslint radix: ["error", "as-needed"] */
 /* eslint no-confusing-arrow: ["error", {"allowParens": true}] */
 /* eslint no-extra-parens:
-          ["warn", "all", { "enforceForArrowConditionals": false,
-                            "returnAssign": false }] */
+          ["error", "all", { "enforceForArrowConditionals": false,
+                             "returnAssign": false,
+                             "nestedBinaryExpressions": false}] */
 /* eslint no-return-assign: ["error", "except-parens"] */
+/* eslint no-mixed-operators: "error" */
 
 
 top.akk = (function iife ($) {
@@ -132,7 +134,8 @@ top.akk = (function iife ($) {
                     }
                     if (_.isNull(_.set(akk, cv.key, value)[cv.key])) {
                         _.set(akk, cv.key, cv.default);
-                    } // eslint-disable-next-line no-magic-numbers
+                    }
+                    /* eslint-disable-next-line no-magic-numbers */
                     if (i === akk.localStorageKeys.length - 1) {
                         resolve();
                     }
@@ -150,7 +153,8 @@ top.akk = (function iife ($) {
                         .catch(console.error);
                 } else {
                     console.error('saveLocalStorage'.concat(' ', cv.key));
-                } // eslint-disable-next-line no-magic-numbers
+                }
+                /* eslint-disable-next-line no-magic-numbers */
                 if (i === akk.localStorageKeys.length - 1) {
                     resolve();
                 }
@@ -194,12 +198,14 @@ top.akk = (function iife ($) {
     };
     akk.newPagesProps = [
         {
-            text: '|<<<', // eslint-disable-next-line sort-keys
+            text: '|<<<',
+            /* eslint-disable-next-line sort-keys */
             href: () => akk.oldPages.first().href
         },
         {
-            text: '<<<', // eslint-disable-next-line sort-keys
-            href: () => { // eslint-disable-line arrow-body-style
+            text: '<<<',
+            /* eslint-disable-next-line sort-keys, arrow-body-style */
+            href: () => {
                 return akk.activePage.previousElementSibling &&
                        akk.activePage.previousElementSibling.nodeName !== 'BR' &&
                        Number.isFinite(Number(akk.activePage
@@ -209,8 +215,9 @@ top.akk = (function iife ($) {
             }
         },
         {
-            text: '>>>', // eslint-disable-next-line sort-keys
-            href: () => { // eslint-disable-line arrow-body-style
+            text: '>>>',
+            /* eslint-disable-next-line sort-keys, arrow-body-style */
+            href: () => {
                 return akk.activePage.nextElementSibling &&
                        Number.isFinite(Number(akk.activePage
                            .nextElementSibling.innerText))
@@ -219,7 +226,8 @@ top.akk = (function iife ($) {
             }
         },
         {
-            text: '>>>|', // eslint-disable-next-line sort-keys
+            text: '>>>|',
+            /* eslint-disable-next-line sort-keys */
             href: () => akk.oldPages.last().href
         }
     ];
@@ -246,7 +254,8 @@ top.akk = (function iife ($) {
         console.log('modTableKeysAccount');
         if (!location.pathname.includes('account_page')) { return; }
         _.set(akk, 'tableKeys', $(akk.sel.rowsTableKeys).toArray()
-            .from(1) // eslint-disable-line no-magic-numbers
+            /* eslint-disable-next-line no-magic-numbers */
+            .from(1)
             .map((tr) => {
                 const key = tr.children[4].innerText,
                     td = $('<td/>').attr('valign', 'top')
@@ -269,14 +278,15 @@ top.akk = (function iife ($) {
         console.log('updateGameData');
         let rows = $(akk.sel.tableKeysRow).toArray();
         if (rows.length < akk.minRowLenUpdGameData ||
-            !location.pathname.includes('digstore') && !location.pathname.includes('store_updateshowdlc') &&
-             !location.pathname.includes('tradesXT') && !location.pathname.includes('storeXT')) {
+            (!location.pathname.includes('digstore') && !location.pathname.includes('store_updateshowdlc') &&
+             !location.pathname.includes('tradesXT') && !location.pathname.includes('storeXT'))) {
             return [];
         }
         rows = rows.map((row) => {
             let cols = _.toArray(row.children);
             if (location.pathname.includes('digstore') || location.pathname.includes('store_updateshowdlc')) {
-                cols = { /* eslint-disable sort-keys */
+                cols = {
+                    /* eslint-disable sort-keys */
                     no: parseInt(cols[0].textContent),
                     new: cols[1].innerHTML.compact().includes('New'),
                     steamPrice: parseFloat(cols[2].textContent.replace('$', '')),
@@ -292,9 +302,11 @@ top.akk = (function iife ($) {
                     buyId: cols[12].children[0] && Number(cols[12].children[0].href.replace(/\D+/gu, '')),
                     buyTrade: cols[12].children[0] && cols[12].children[0].href.includes('buytrade'),
                     ts: Date.now()
-                }; /* eslint-enable sort-keys */
+                    /* eslint-enable sort-keys */
+                };
             } else if (location.pathname.includes('tradesXT') || location.pathname.includes('storeXT')) {
-                cols = { /* eslint-disable sort-keys */
+                cols = {
+                    /* eslint-disable sort-keys */
                     no: parseInt(cols[0].textContent),
                     gameTitle: cols[1].textContent,
                     gameId: akk.getAppidFromUrl(_.get(cols, '[1].children.[0].href')),
@@ -307,7 +319,8 @@ top.akk = (function iife ($) {
                     buyId: cols[8].children[0] && Number(cols[8].children[0].href.replace(/\D+/gu, '')),
                     buyTrade: cols[8].children[0] && cols[8].children[0].href.includes('buytrade'),
                     ts: Date.now()
-                }; /* eslint-enable sort-keys */
+                    /* eslint-enable sort-keys */
+                };
             } else { console.error('updateGameData.rows.cols'); }
             cols = akk.addChecksumObj(cols);
             return cols;
@@ -372,7 +385,8 @@ top.akk = (function iife ($) {
         if (location.pathname.includes('tradesXT') ||
             location.pathname.includes('storeXT')) {
             akk.tableKeys = $(akk.sel.rowsTableKeys).toArray()
-                .from(2) // eslint-disable-line no-magic-numbers
+                /* eslint-disable-next-line no-magic-numbers */
+                .from(2)
                 .map((tr) => {
                     const {href} = tr.children[1].firstElementChild;
                     akk.addButtonBlacklist(tr, href);
@@ -455,7 +469,8 @@ top.akk = (function iife ($) {
         akk.hideGamesOwned();
         akk.modBodyTable();
         console.log(akk);
-        console.dir(akk);/* eslint-disable-line no-console */
+        /* eslint-disable-next-line no-console */
+        console.dir(akk);
     };
     $.getScript(akk.url.loadjs).done(akk.Init)
         .fail((...args) => console.error('Triggered ajaxError handler.', args));
