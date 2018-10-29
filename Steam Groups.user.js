@@ -14,6 +14,35 @@
 // @grant        GM_getValue
 // ==/UserScript==
 
+/* global _ */
+/* exported akk */
+
+/* eslint id-length: ["error", { "min": 2 }] */
+/* eslint lines-around-directive: 0 */
+/* eslint max-len: ["error", { "ignoreUrls": true }] */
+/* eslint multiline-comment-style: 0 */
+/* eslint newline-after-var: 0 */
+/* eslint padded-blocks: 0 */
+/* eslint quotes: [2, "single"] */
+/* eslint sort-vars: 0 */
+/* eslint-env browser, es6, greasemonkey */
+
+/* eslint max-lines: ["error", 500] */
+/* eslint max-len: ["error", { "ignoreStrings": true }] */
+/* eslint max-statements: ["error", 10, { "ignoreTopLevelFunctions": true }] */
+/* eslint no-console: ["error", { allow: ["log", "warn", "error"] }] */
+/* eslint newline-before-return: "off" */
+/* eslint no-ternary: "off" */
+/* eslint multiline-ternary: ["error", "always-multiline"] */
+/* eslint dot-location: ["error", "property"] */
+/* eslint no-magic-numbers: ["error", { "ignoreArrayIndexes": true }] */
+/* eslint quote-props: ["error", "consistent-as-needed"] */
+/* eslint id-length: ["error", { "exceptions": ["$"] }] */
+/* eslint brace-style: ["error", "1tbs", { "allowSingleLine": true }] */
+/* eslint block-spacing: ["error", "always"] */
+/* eslint max-statements-per-line: ["error", { "max": 2 }] */
+/* eslint radix: ["error", "as-needed"] */
+
 top.akk = (function() {
     'use strict';
     let akk = {};
