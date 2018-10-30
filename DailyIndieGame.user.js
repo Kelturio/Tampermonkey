@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         DailyIndieGame
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  try to take over the world!
 // @author       Searinox
 // @icon         https://avatars0.githubusercontent.com/u/16297928?s=460&v=4
@@ -49,7 +49,9 @@
 /* eslint indent: ["error", 2, {
          "VariableDeclarator": { "var": 2, "let": 2, "const": 2 },
          "ArrayExpression": "first",
-         "ObjectExpression": "first"
+         "ObjectExpression": "first",
+         "FunctionExpression": {"body": 1, "parameters": "first"},
+         "CallExpression": {"arguments": "first"}
          }] */
 /* eslint indent-legacy: "off" */
 /* eslint comma-style: ["error", "first",
@@ -71,6 +73,7 @@
         "on": "colon"
     }
 }] */
+/* eslint function-paren-newline: ["error", "consistent"] */
 
 top.akk = (function iife ($) {
   'use strict'
@@ -461,8 +464,7 @@ top.akk = (function iife ($) {
   };
   */
   akk.getGameTitlesUnique = () => _
-    .values(akk.gameData).map((cv) => cv.gameTitle)
-    .unique()
+    .values(akk.gameData).map((cv) => cv.gameTitle).unique()
   akk.Init = (script, textStatus) => {
     console.log(`Init ${script} ${textStatus}`)
     const bundleIds = Object.keys(akk.bundles).map((bundleId) => {
