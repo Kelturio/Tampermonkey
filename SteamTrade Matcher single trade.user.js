@@ -43,7 +43,7 @@
     }
     function savePublicProfiles() {
         localStorage.setItem('publicProfiles', JSON.stringify(
-            [...(JSON.parse(localStorage.getItem('publicProfiles')) || []), ...publicProfiles]));
+            _.uniq([...(JSON.parse(localStorage.getItem('publicProfiles')) || []), ...publicProfiles])));
     }
     var compareInventories = function(steamid, source) {
         console.log('compareInventories');
