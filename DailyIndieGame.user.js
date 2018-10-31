@@ -9,7 +9,7 @@
 // @grant        none
 // ==/UserScript==
 
-/* global _ */
+/* global _, loadjs */
 /* exported akk */
 
 /* eslint id-length: ["error", { "min": 2 }] */
@@ -82,7 +82,7 @@ top.akk = (function iife ($) {
   akk.minRowLenUpdGameData = 2
   akk.url = {
     app        : 'http://store.steampowered.com/app/',
-    loadjs     : 'https://cdnjs.cloudflare.com/ajax/libs/loadjs/3.5.4/loadjs.min.js',
+    loadjs     : 'https://cdnjs.cloudflare.com/ajax/libs/loadjs/3.5.4/loadjs.js',
     registerKey: 'https://store.steampowered.com/account/registerkey?key=',
     userdata   : 'https://store.steampowered.com/dynamicstore/userdata/',
   }
@@ -226,36 +226,41 @@ top.akk = (function iife ($) {
     console.log('appendCloneSel')
     return $(destination).append($(target).clone())[0].lastChild
   }
-  akk.newPagesProps = [{
-    text: '|<<<',
-    /* eslint-disable-next-line sort-keys */
-    href: () => akk.oldPages.first().href,
-  }, {
-    text: '<<<',
-    /* eslint-disable-next-line sort-keys, arrow-body-style */
-    href: () => {
-      return akk.activePage.previousElementSibling &&
+  akk.newPagesProps = [
+    {
+      text: '|<<<',
+      /* eslint-disable-next-line sort-keys */
+      href: () => akk.oldPages.first().href,
+    },
+    {
+      text: '<<<',
+      /* eslint-disable-next-line sort-keys, arrow-body-style */
+      href: () => {
+        return akk.activePage.previousElementSibling &&
           akk.activePage.previousElementSibling.nodeName !== 'BR' &&
           Number.isFinite(Number(akk.activePage
             .previousElementSibling.innerText))
-        ? akk.activePage.previousElementSibling
-        : akk.oldPages.first().href
+          ? akk.activePage.previousElementSibling
+          : akk.oldPages.first().href
+      },
     },
-  }, {
-    text: '>>>',
-    /* eslint-disable-next-line sort-keys, arrow-body-style */
-    href: () => {
-      return akk.activePage.nextElementSibling &&
+    {
+      text: '>>>',
+      /* eslint-disable-next-line sort-keys, arrow-body-style */
+      href: () => {
+        return akk.activePage.nextElementSibling &&
           Number.isFinite(Number(akk.activePage
             .nextElementSibling.innerText))
-        ? akk.activePage.nextElementSibling.href
-        : akk.oldPages.last().href
+          ? akk.activePage.nextElementSibling.href
+          : akk.oldPages.last().href
+      },
     },
-  }, {
-    text: '>>>|',
-    /* eslint-disable-next-line sort-keys */
-    href: () => akk.oldPages.last().href,
-  }]
+    {
+      text: '>>>|',
+      /* eslint-disable-next-line sort-keys */
+      href: () => akk.oldPages.last().href,
+    },
+  ]
   akk.modPages = () => {
     console.log('modPages')
     _.set(akk, 'activePage', $(akk.sel.activePage)[0])
@@ -428,6 +433,21 @@ top.akk = (function iife ($) {
     $(akk.sel.bodyTable).width('100%')
     $(akk.sel.dig2TableGray).width('100%')
   }
+
+  const NUM_RETRIES = 0
+  class Bundle {
+    constructor(bundleId, paths, before, success, error,
+                async = true, numRetries = NUM_RETRIES) {
+      this.bundleId = bundleId
+      this.paths = paths
+      this.before = before
+      this.success = success
+      this.error = error
+      this.async = async
+      this.numRetries = numRetries
+    }
+  }
+
   akk.bundles = {
     /* eslint-disable sort-keys */
     'sugar'      : ['https://cdnjs.cloudflare.com/ajax/libs/sugar/2.0.4/sugar.min.js'],
@@ -435,6 +455,15 @@ top.akk = (function iife ($) {
     'ramda'      : ['https://cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js'],
     'localforage': ['https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.2/localforage.min.js'],
     'blueimp-md5': ['https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js'],
+    /* eslint-enable sort-keys */
+  }
+  akk.bundles = {
+    /* eslint-disable sort-keys */
+    'sugar'      : new Bundle('sugar', ['https://cdnjs.cloudflare.com/ajax/libs/sugar/2.0.4/sugar.min.js']),
+    'lodash'     : new Bundle('lodash', ['https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.min.js']),
+    'ramda'      : new Bundle('ramda', ['https://cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js']),
+    'localforage': new Bundle('localforage', ['https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.2/localforage.min.js']),
+    'blueimp-md5': new Bundle('blueimp-md5', ['https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js']),
     /* eslint-enable sort-keys */
   }
 
@@ -465,18 +494,21 @@ top.akk = (function iife ($) {
   */
   akk.getGameTitlesUnique = () => _
     .values(akk.gameData).map((cv) => cv.gameTitle).unique()
+
   akk.Init = (script, textStatus) => {
     console.log(`Init ${script} ${textStatus}`)
     const bundleIds = Object.keys(akk.bundles).map((bundleId) => {
-      if (!top.loadjs.isDefined(bundleId)) {
-        top.loadjs(akk.bundles[bundleId], bundleId)
+      if (!loadjs.isDefined(bundleId)) {
+        loadjs(akk.bundles[bundleId], bundleId)
+        loadjs.ready(bundleId, (...args) => console.debug(`loadjs ${bundleId}`, args))
       }
       return bundleId
     })
-    top.loadjs.ready(bundleIds, akk.Setup)
+    let tmp = loadjs.ready(bundleIds, akk.Setup)
+    console.warn(tmp)
   }
-  akk.Setup = () => {
-    console.log('Setup')
+  akk.Setup = (...args) => {
+    console.log('Setup', args)
     top.Sugar.extend()
     akk.loadLocalStorage()
       //  .then(() => akk.checkUserData())
