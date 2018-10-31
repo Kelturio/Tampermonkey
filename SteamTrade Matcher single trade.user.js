@@ -12,7 +12,7 @@
 
 (function() {
     //'use strict';
-    function getMatches() {
+        function getMatches() {
         top.matches = _.zip(jQuery('#match-results > div > div.panel-body > a').toArray(),
                             jQuery('#match-results > div > div.panel-heading.match-box > h1 span.stm-user').toArray())
             .map(e => _.zipObject(['href', 'isBot'], [e[0].href.split('/'), e[1].textContent.includes('Trade bot')]))
@@ -25,16 +25,28 @@
             })
         });
         console.debug(top.matchesObj)
+        top.tradeHrefs = []
         top.matchesQuene = _.map(top.matchesObj, (val, key) => [key, _.sortBy(val, 'isBot').reverse()])
             .sort((a, b) => a[1].length - b[1].length)
             .map(e => {
-            return e[1].map(ee => {
-                ee.tradeSel = _.find(ee.trade, {you: e[0]});
-                ee.tradeHref = `${location.origin}/action/startTradeOffer/${ee.sid}/${ee.tradeToken}/${ee.tradeSel.them}/${ee.tradeSel.you}`;
-                return ee;
-            });
+            return _.values(e[1].map(ee => {
+                const {them, you} = _.find(ee.trade, {you: e[0]})
+                    , tradeHref = `${location.origin}/action/startTradeOffer/${ee.sid}/${ee.tradeToken}/${them}/${you}`
+                 , {isBot, sid, trade, tradeToken, ...rest} = ee
+                top.tradeHrefs.push(tradeHref)
+                return {isBot, them, you, sid, trade, tradeToken, tradeHref}
+            }).groupBy('isBot')).map(cv => _.values(cv && cv.groupBy('them')).add(null))
         })
     }
+getMatches()
+console.dir(top.matchesQuene)
+console.table(top.matchesQuene.flatten(4).first(42).compact())
+//console.dir(top.tradeHrefs)
+console.dir(top.tradeHrefs.sort())
+//console.dir(_.uniq(top.tradeHrefs.map(cv => cv.reverse()).sort().map(cv => cv.reverse())))
+top.matchesQuene.flatten(4).map(cv => cv ? [`%c${cv.isBot} ${cv.them} ${cv.you} ${cv.tradeHref}`, `background: ${cv.isBot ? 'green' : 'yellow'}; color: ${cv.isBot ? 'white' : 'black'}; font-size: 10`] : [`%c${'*'.repeat(80)}`, 'background: orange; font-size: 10']).map(cv => console.log(...cv))
+
+    
     function fetchNextMatch() {
         top.matchesQuene.shift().map(ee => {
             console.log(ee.tradeHref);
