@@ -14,7 +14,7 @@
     //'use strict';
     function getMatches() {
         top.matches = _.zip(jQuery('#match-results > div > div.panel-body > a').toArray(),
-                            jQuery('#match-results > div > div.panel-heading.match-box > h1 > span.stm-user').toArray())
+                            jQuery('#match-results > div > div.panel-heading.match-box > h1 span.stm-user').toArray())
             .map(e => _.zipObject(['href', 'isBot'], [e[0].href.split('/'), e[1].textContent.includes('Trade bot')]))
             .map(e => _.zipObject(['sid', 'tradeToken', 'trade', 'isBot'], [e.href[5], e.href[6], _.zip(e.href[7].split(';'), e.href[8].split(';')).map(ee => _.zipObject(['them', 'you'], [ee[0], ee[1]])), e.isBot]))
         console.log(top.matches)
@@ -42,8 +42,9 @@
         });
     }
     function savePublicProfiles() {
-        localStorage.setItem('publicProfiles', JSON.stringify(
-            _.uniq([...(JSON.parse(localStorage.getItem('publicProfiles')) || []), ...publicProfiles])));
+        publicProfiles = _.uniq([...JSON.parse(_.get(localStorage, 'publicProfiles', [])), ...publicProfiles])
+      $('#progress-total').html(publicProfiles.length)
+        _.set(localStorage, 'publicProfiles', JSON.stringify(publicProfiles));
     }
     var compareInventories = function(steamid, source) {
         console.log('compareInventories');
