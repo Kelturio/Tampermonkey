@@ -12,27 +12,328 @@
 /* global _, loadjs */
 /* exported akk */
 
-/* eslint id-length: ["error", { "min": 2 }] */
-/* eslint lines-around-directive: 0 */
-/* eslint max-len: ["error", { "ignoreUrls": true }] */
-/* eslint multiline-comment-style: 0 */
-/* eslint newline-after-var: 0 */
-/* eslint padded-blocks: 0 */
-/* eslint quotes: [2, "single"] */
-/* eslint sort-vars: 0 */
+/* eslint {
+  "accessor-pairs": [2, {
+    "getWithoutSet": true,
+    "setWithoutGet": false
+  }],
+  "array-bracket-newline": [2, "consistent"],
+  "array-bracket-spacing": [2, "never", {
+    "singleValue": false,
+    "objectsInArrays": true,
+    "arraysInArrays": true
+  }],
+  "array-callback-return": ["error", { allowImplicit: false }],
+  "array-element-newline": [2, "consistent"],
+  "arrow-body-style": [2, "as-needed", {
+    "requireReturnForObjectLiteral": false
+  }],
+  "arrow-parens": 2,
+  "arrow-spacing": 2,
+  "block-scoped-var": 2,
+  "block-spacing": 2,
+  "brace-style": 2,
+  "callback-return": 2,
+  "camelcase": 2,
+  "capitalized-comments": [2, "always", {
+    "line": {
+      "ignorePattern": "",
+      "ignoreInlineComments": false,
+      "ignoreConsecutiveComments": false
+    },
+    "block": {
+      "ignorePattern": "",
+      "ignoreInlineComments": false,
+      "ignoreConsecutiveComments": false
+    }
+  }],
+  "class-methods-use-this": 2,
+  "comma-dangle": 2,
+  "comma-spacing": 2,
+  "comma-style": 2,
+  "complexity": 2,
+  "computed-property-spacing": 2,
+  "consistent-return": 2,
+  "consistent-this": 2,
+  "constructor-super": 2,
+  "curly": 2,
+  "default-case": 2,
+  "dot-location": 2,
+  "dot-notation": 2,
+  "eol-last": 2,
+  "eqeqeq": 2,
+  "for-direction": 2,
+  "func-call-spacing": 2,
+  "func-name-matching": 2,
+  "func-names": 2,
+  "func-style": 2,
+  "function-paren-newline": 2,
+  "generator-star-spacing": 2,
+  "getter-return": 2,
+  "global-require": 2,
+  "guard-for-in": 2,
+  "handle-callback-err": 2,
+  "id-blacklist": 2,
+  "id-length": [2, {
+    "min": 2,
+    "max": Infinity,
+    "exceptions": ["$", "i"],
+    "properties": "never"
+  }],
+  "id-match": 2,
+  "implicit-arrow-linebreak": 2,
+  "indent": 2,
+  "init-declarations": 2,
+  "jsx-quotes": 2,
+  "key-spacing": 2,
+  "keyword-spacing": 2,
+  "line-comment-position": 2,
+  "linebreak-style": 2,
+  "lines-around-comment": 2,
+  "lines-between-class-members": 2,
+  "max-classes-per-file": 2,
+  "max-depth": 2,
+  "max-len": [2, {
+    "code": 80,
+    "comments": 80,
+    "tabWidth": 2,
+    "ignorePattern": "",
+    "ignoreComments": false,
+    "ignoreStrings": true,
+    "ignoreUrls": false,
+    "ignoreTemplateLiterals": false,
+    "ignoreRegExpLiterals": false,
+    "ignoreTrailingComments": false
+  }],
+  "max-lines-per-function": 2,
+  "max-lines": 2,
+  "max-nested-callbacks": 2,
+  "max-params": 2,
+  "max-statements-per-line": 2,
+  "max-statements": 2,
+  "multiline-comment-style": [0, "bare-block"],
+  "multiline-ternary": 2,
+  "new-cap": 2,
+  "new-parens": 2,
+  "newline-per-chained-call": 2,
+  "no-alert": 2,
+  "no-array-constructor": 2,
+  "no-async-promise-executor": 2,
+  "no-await-in-loop": 2,
+  "no-bitwise": 2,
+  "no-buffer-constructor": 2,
+  "no-caller": 2,
+  "no-case-declarations": 2,
+  "no-class-assign": 2,
+  "no-compare-neg-zero": 2,
+  "no-cond-assign": 2,
+  "no-confusing-arrow": 2,
+  "no-console": 2,
+  "no-const-assign": 2,
+  "no-constant-condition": 2,
+  "no-continue": 2,
+  "no-control-regex": 2,
+  "no-debugger": 2,
+  "no-delete-var": 2,
+  "no-div-regex": 2,
+  "no-dupe-args": 2,
+  "no-dupe-class-members": 2,
+  "no-dupe-keys": 2,
+  "no-duplicate-case": 2,
+  "no-duplicate-imports": 2,
+  "no-else-return": 2,
+  "no-empty-character-class": 2,
+  "no-empty-function": 2,
+  "no-empty-pattern": 2,
+  "no-empty": 2,
+  "no-eq-null": 2,
+  "no-eval": 2,
+  "no-ex-assign": 2,
+  "no-extend-native": 2,
+  "no-extra-bind": 2,
+  "no-extra-boolean-cast": 2,
+  "no-extra-label": 2,
+  "no-extra-parens": 2,
+  "no-extra-semi": 2,
+  "no-fallthrough": 2,
+  "no-floating-decimal": 2,
+  "no-func-assign": 2,
+  "no-global-assign": 2,
+  "no-implicit-coercion": 2,
+  "no-implicit-globals": 2,
+  "no-implied-eval": 2,
+  "no-inline-comments": 2,
+  "no-inner-declarations": 2,
+  "no-invalid-regexp": 2,
+  "no-invalid-this": 2,
+  "no-irregular-whitespace": 2,
+  "no-iterator": 2,
+  "no-label-var": 2,
+  "no-labels": 2,
+  "no-lone-blocks": 2,
+  "no-lonely-if": 2,
+  "no-loop-func": 2,
+  "no-magic-numbers": 2,
+  "no-misleading-character-class": 2,
+  "no-mixed-operators": 2,
+  "no-mixed-requires": 2,
+  "no-mixed-spaces-and-tabs": 2,
+  "no-multi-assign": 2,
+  "no-multi-spaces": 2,
+  "no-multi-str": 2,
+  "no-multiple-empty-lines": [2, {
+    "max": 2,
+    "maxEOF": 1,
+    "maxBOF": 0
+  }],
+  "no-negated-condition": 2,
+  "no-nested-ternary": 2,
+  "no-new-func": 2,
+  "no-new-object": 2,
+  "no-new-require": 2,
+  "no-new-symbol": 2,
+  "no-new-wrappers": 2,
+  "no-new": 2,
+  "no-obj-calls": 2,
+  "no-octal-escape": 2,
+  "no-octal": 2,
+  "no-param-reassign": 2,
+  "no-path-concat": 2,
+  "no-plusplus": 2,
+  "no-process-env": 2,
+  "no-process-exit": 2,
+  "no-proto": 2,
+  "no-prototype-builtins": 2,
+  "no-redeclare": 2,
+  "no-regex-spaces": 2,
+  "no-restricted-globals": 2,
+  "no-restricted-imports": 2,
+  "no-restricted-modules": 2,
+  "no-restricted-properties": 2,
+  "no-restricted-syntax": 2,
+  "no-return-assign": 2,
+  "no-return-await": 2,
+  "no-script-url": 2,
+  "no-self-assign": 2,
+  "no-self-compare": 2,
+  "no-sequences": 2,
+  "no-shadow-restricted-names": 2,
+  "no-shadow": 2,
+  "no-sparse-arrays": 2,
+  "no-sync": 2,
+  "no-tabs": 2,
+  "no-template-curly-in-string": 2,
+  "no-ternary": 0,
+  "no-this-before-super": 2,
+  "no-throw-literal": 2,
+  "no-trailing-spaces": 2,
+  "no-undef-init": 2,
+  "no-undef": 2,
+  "no-undefined": 2,
+  "no-underscore-dangle": 2,
+  "no-unexpected-multiline": 2,
+  "no-unmodified-loop-condition": 2,
+  "no-unneeded-ternary": 2,
+  "no-unreachable": 2,
+  "no-unsafe-finally": 2,
+  "no-unsafe-negation": 2,
+  "no-unused-expressions": 2,
+  "no-unused-labels": 2,
+  "no-unused-vars": 2,
+  "no-use-before-define": 2,
+  "no-useless-call": 2,
+  "no-useless-computed-key": 2,
+  "no-useless-concat": 2,
+  "no-useless-constructor": 2,
+  "no-useless-escape": 2,
+  "no-useless-rename": 2,
+  "no-useless-return": 2,
+  "no-var": 2,
+  "no-void": 2,
+  "no-warning-comments": 2,
+  "no-whitespace-before-property": 2,
+  "no-with": 2,
+  "nonblock-statement-body-position": 2,
+  "object-curly-newline": 2,
+  "object-curly-spacing": 2,
+  "object-property-newline": 2,
+  "object-shorthand": 2,
+  "one-var-declaration-per-line": 2,
+  "one-var": 2,
+  "operator-assignment": 2,
+  "operator-linebreak": 2,
+  "padded-blocks": [2, {
+    "blocks": "never",
+    "switches": "never",
+    "classes": "never"
+  }],
+  "padding-line-between-statements": 2,
+  "prefer-arrow-callback": 2,
+  "prefer-const": 2,
+  "prefer-destructuring": 2,
+  "prefer-numeric-literals": 2,
+  "prefer-object-spread": 2,
+  "prefer-promise-reject-errors": 2,
+  "prefer-rest-params": 2,
+  "prefer-spread": 2,
+  "prefer-template": 2,
+  "quote-props": 2,
+  "quotes": [2, "single", {
+    "avoidEscape": true,
+    "allowTemplateLiterals": true
+  }],
+  "radix": 2,
+  "require-atomic-updates": 2,
+  "require-await": 2,
+  "require-jsdoc": 2,
+  "require-unicode-regexp": 2,
+  "require-yield": 2,
+  "rest-spread-spacing": 2,
+  "semi-spacing": 2,
+  "semi-style": 2,
+  "semi": 2,
+  "sort-imports": 2,
+  "sort-keys": [2, "asc", {
+    "caseSensitive": true,
+    "natural": true
+  }],
+  "sort-vars": [2, { "ignoreCase": false }],
+  "space-before-blocks": 2,
+  "space-before-function-paren": 2,
+  "space-in-parens": 2,
+  "space-infix-ops": 2,
+  "space-unary-ops": 2,
+  "spaced-comment": 2,
+  "strict": 2,
+  "switch-colon-spacing": 2,
+  "symbol-description": 2,
+  "template-curly-spacing": 2,
+  "template-tag-spacing": 2,
+  "unicode-bom": 2,
+  "use-isnan": 2,
+  "valid-jsdoc": 2,
+  "valid-typeof": 2,
+  "vars-on-top": 2,
+  "wrap-iife": 2,
+  "wrap-regex": 2,
+  "yield-star-spacing": 2,
+  "yoda": 2
+} */
+
+
 /* eslint-env browser, es6, greasemonkey */
 
 /* eslint max-lines: ["error", 5120] */
-/* eslint max-len: ["error", { "ignoreStrings": true }] */
+
 /* eslint max-statements: ["error", 10, { "ignoreTopLevelFunctions": true }] */
 /* eslint no-console: ["error", { allow: ["log", "warn", "error"] }] */
 /* eslint newline-before-return: "off" */
-/* eslint no-ternary: "off" */
+
 /* eslint multiline-ternary: ["error", "always-multiline"] */
 /* eslint dot-location: ["error", "property"] */
 /* eslint no-magic-numbers: ["error", { "ignoreArrayIndexes": true }] */
 /* eslint quote-props: ["error", "consistent-as-needed"] */
-/* eslint id-length: ["error", { "exceptions": ["$", "i"] }] */
+
 /* eslint brace-style: ["error", "1tbs", { "allowSingleLine": true }] */
 /* eslint block-spacing: ["error", "always"] */
 /* eslint max-statements-per-line: ["error", { "max": 2 }] */
@@ -58,8 +359,8 @@
           { "exceptions": { "ArrayExpression": true,
                             "ObjectExpression": true } }] */
 /* eslint newline-per-chained-call: ["error", { "ignoreChainWithDepth": 3 }] */
-/* eslint array-element-newline: ["error", "consistent"] */
-/* eslint array-bracket-newline: ["error", "consistent"] */
+
+
 /* eslint comma-dangle: ["error", "always-multiline"] */
 /* eslint key-spacing: ["error", {
     "multiLine": {
@@ -75,9 +376,11 @@
 }] */
 /* eslint function-paren-newline: ["error", "consistent"] */
 
+
 top.akk = (function iife ($) {
   'use strict'
   const akk = {}
+  //  , NUM_RETRIES = 0
   akk.userDataRefresh = 120e3
   akk.minRowLenUpdGameData = 2
   akk.url = {
@@ -293,7 +596,7 @@ top.akk = (function iife ($) {
       .map((tr) => {
         const key = tr.children[4].innerText
             , td = $('<td/>').attr('valign', 'top').appendTo(tr)
-            , anchor = $('<a/>').attr('href', akk.url.registerKey.concat(key)).appendTo(td)
+        const anchor = $('<a/>').attr('href', akk.url.registerKey.concat(key)).appendTo(td)
         $('<span/>').addClass('DIG3_14_White')
           .text('Activate Key')
           .appendTo(anchor)
@@ -434,10 +737,10 @@ top.akk = (function iife ($) {
     $(akk.sel.dig2TableGray).width('100%')
   }
 
-  const NUM_RETRIES = 0
+  /* C
   class Bundle {
-    constructor(bundleId, paths, before, success, error,
-                async = true, numRetries = NUM_RETRIES) {
+    constructor (bundleId, paths, before, success, error,
+                 async = true, numRetries = NUM_RETRIES) {
       this.bundleId = bundleId
       this.paths = paths
       this.before = before
@@ -447,7 +750,7 @@ top.akk = (function iife ($) {
       this.numRetries = numRetries
     }
   }
-
+  */
   akk.bundles = {
     /* eslint-disable sort-keys */
     'sugar'      : ['https://cdnjs.cloudflare.com/ajax/libs/sugar/2.0.4/sugar.min.js'],
@@ -457,16 +760,17 @@ top.akk = (function iife ($) {
     'blueimp-md5': ['https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js'],
     /* eslint-enable sort-keys */
   }
-  akk.bundles = {
-    /* eslint-disable sort-keys */
-    'sugar'      : new Bundle('sugar', ['https://cdnjs.cloudflare.com/ajax/libs/sugar/2.0.4/sugar.min.js']),
-    'lodash'     : new Bundle('lodash', ['https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.min.js']),
-    'ramda'      : new Bundle('ramda', ['https://cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js']),
-    'localforage': new Bundle('localforage', ['https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.2/localforage.min.js']),
-    'blueimp-md5': new Bundle('blueimp-md5', ['https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js']),
-    /* eslint-enable sort-keys */
-  }
-
+  /* eslint-disable max-len */
+  // T   akk.bundles = {
+  //     /* eslint-disable sort-keys */
+  //     'sugar'      : new Bundle('sugar', ['https://cdnjs.cloudflare.com/ajax/libs/sugar/2.0.4/sugar.min.js']),
+  //     'lodash'     : new Bundle('lodash', ['https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.min.js']),
+  //     'ramda'      : new Bundle('ramda', ['https://cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js']),
+  //     'localforage': new Bundle('localforage', ['https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.2/localforage.min.js']),
+  //     'blueimp-md5': new Bundle('blueimp-md5', ['https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js']),
+  //     /* eslint-enable sort-keys */
+  //   }
+  /* eslint-enable max-len */
   /* Temp
   akk.cleanGameData = () => {
       let gameDataNew = {};
@@ -500,12 +804,12 @@ top.akk = (function iife ($) {
     const bundleIds = Object.keys(akk.bundles).map((bundleId) => {
       if (!loadjs.isDefined(bundleId)) {
         loadjs(akk.bundles[bundleId], bundleId)
-        loadjs.ready(bundleId, (...args) => console.debug(`loadjs ${bundleId}`, args))
+        loadjs.ready(bundleId, (...args) => console.log(`loadjs ${bundleId}`,
+                                                        args))
       }
       return bundleId
     })
-    let tmp = loadjs.ready(bundleIds, akk.Setup)
-    console.warn(tmp)
+    loadjs.ready(bundleIds, akk.Setup)
   }
   akk.Setup = (...args) => {
     console.log('Setup', args)
