@@ -32,7 +32,9 @@
   "arrow-spacing": 2,
   "block-scoped-var": 2,
   "block-spacing": 2,
-  "brace-style": 2,
+  "brace-style": [2, "1tbs", {
+    "allowSingleLine": true
+  }],
   "callback-return": 2,
   "camelcase": 2,
   "capitalized-comments": [2, "always", {
