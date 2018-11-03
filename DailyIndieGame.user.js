@@ -353,28 +353,10 @@
 
 
 /* eslint-env browser, es6, greasemonkey */
-
-/* eslint max-lines: ["error", 5120] */
-
-/* eslint max-statements: ["error", 10, { "ignoreTopLevelFunctions": true }] */
 /* eslint no-console: ["error", { allow: ["log", "warn", "error"] }] */
-/* eslint newline-before-return: "off" */
 
-/* eslint multiline-ternary: ["error", "always-multiline"] */
-/* eslint dot-location: ["error", "property"] */
-/* eslint no-magic-numbers: ["error", { "ignoreArrayIndexes": true }] */
-/* eslint quote-props: ["error", "consistent-as-needed"] */
-
-/* eslint brace-style: ["error", "1tbs", { "allowSingleLine": true }] */
 /* eslint block-spacing: ["error", "always"] */
 /* eslint max-statements-per-line: ["error", { "max": 2 }] */
-/* eslint radix: ["error", "as-needed"] */
-/* eslint no-confusing-arrow: ["error", {"allowParens": true}] */
-/* eslint no-extra-parens:
-          ["error", "all", { "enforceForArrowConditionals": false,
-                             "returnAssign": false,
-                             "nestedBinaryExpressions": false}] */
-/* eslint no-return-assign: ["error", "except-parens"] */
 /* eslint no-mixed-operators: "error" */
 /* eslint semi:
           ["error", "never", { "beforeStatementContinuationChars": "always"}] */
@@ -390,9 +372,6 @@
           { "exceptions": { "ArrayExpression": true,
                             "ObjectExpression": true } }] */
 /* eslint newline-per-chained-call: ["error", { "ignoreChainWithDepth": 3 }] */
-
-
-/* eslint comma-dangle: ["error", "always-multiline"] */
 /* eslint key-spacing: ["error", {
     "multiLine": {
         "beforeColon": false,
@@ -469,22 +448,22 @@ top.akk = (function iife ($) {
   }
   akk.localStorageKeys = [
     {
-      default: {
+      'default': {
         rgOwnedApps: [],
       },
-      key: 'userdata',
+      'key': 'userdata',
     },
     {
-      default: null,
-      key    : 'userdata_date',
+      'default': null,
+      'key'    : 'userdata_date',
     },
     {
-      default: [],
-      key    : 'blacklist',
+      'default': [],
+      'key'    : 'blacklist',
     },
     {
-      default: {},
-      key    : 'gameData',
+      'default': {},
+      'key'    : 'gameData',
     },
   ]
   akk.blacklist = []
@@ -513,8 +492,7 @@ top.akk = (function iife ($) {
     return new Promise((resolve) => {
       akk.localStorageKeys.map((cv, i) => {
         if (akk[cv.key]) {
-          top.localforage.setItem(cv.key, akk[cv.key])
-            .then(console.log)
+          top.localforage.setItem(cv.key, akk[cv.key]).then(console.log)
             .catch(console.error)
         } else {
           console.error('saveLocalStorage'.concat(' ', cv.key))
@@ -627,7 +605,7 @@ top.akk = (function iife ($) {
       .map((tr) => {
         const key = tr.children[4].innerText
             , td = $('<td/>').attr('valign', 'top').appendTo(tr)
-        const anchor = $('<a/>').attr('href', akk.url.registerKey.concat(key)).appendTo(td)
+            , anchor = $('<a/>').attr('href', akk.url.registerKey.concat(key)).appendTo(td)
         $('<span/>').addClass('DIG3_14_White')
           .text('Activate Key')
           .appendTo(anchor)
@@ -693,9 +671,8 @@ top.akk = (function iife ($) {
       cols = akk.addChecksumObj(cols)
       return cols
     })
-    const rowsObj = {}
-        , bl = akk.updateGameDataMd5Blacklist
-    /* eslint-disable-next-line no-magic-numbers */
+    const bl = akk.updateGameDataMd5Blacklist
+        , rowsObj = {}
     rows.from(1).filter((row) => !(!row.gameUrl && bl.includes(row.md5)))
       .map((row) => _.set(rowsObj, row.md5, row))
     _.set(akk, 'gameDataNew', rowsObj)
