@@ -631,9 +631,8 @@ top.akk = (function iife ($) {
     if (!location.pathname.includes('account_page')) {
       return
     }
-    _.set(akk, 'tableKeys', $(akk.sel.rowsTableKeys).toArray()
-      /* eslint-disable-next-line no-magic-numbers */
-      .from(1)
+    /* eslint-disable-next-line no-magic-numbers */
+    _.set(akk, 'tableKeys', $(akk.sel.rowsTableKeys).toArray().from(1)
       .map((tr) => {
         const key = tr.children[4].innerText
             , td = $('<td/>').attr('valign', 'top').appendTo(tr)
@@ -642,10 +641,7 @@ top.akk = (function iife ($) {
           .text('Activate Key')
           .appendTo(anchor)
         akk.addButtonBlacklist(tr, akk.addGameUrl(tr.children[2]))
-        return {
-          key,
-          tr,
-        }
+        return {key, tr}
       }))
   }
   akk.updateGameDataMd5Blacklist = ['d58ba90acecfed7e6900bff6029f644b']
@@ -764,10 +760,7 @@ top.akk = (function iife ($) {
         .map((tr) => {
           const {href} = tr.children[1].firstElementChild
           akk.addButtonBlacklist(tr, href)
-          return {
-            href,
-            tr,
-          }
+          return {href, tr}
         })
     }
   }
