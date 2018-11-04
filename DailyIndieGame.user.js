@@ -31,7 +31,7 @@
   "arrow-parens": 2,
   "arrow-spacing": 2,
   "block-scoped-var": 2,
-  "block-spacing": 2,
+  "block-spacing": [2, "always"],
   "brace-style": [2, "1tbs", {
     "allowSingleLine": true
   }],
@@ -58,7 +58,21 @@
     "functions": "ignore"
   }],
   "comma-spacing": 2,
-  "comma-style": 2,
+  "comma-style": [2, "first", {
+    "exceptions": {
+      "VariableDeclaration": false,
+      "ObjectExpression": true,
+      "ObjectPattern": false,
+      "ArrayExpression": true,
+      "ArrayPattern": false,
+      "FunctionDeclaration": false,
+      "FunctionExpression": false,
+      "ArrowFunctionExpression": false,
+      "CallExpression": true,
+      "ImportDeclaration": false,
+      "NewExpression": false,
+    }
+  }],
   "complexity": 2,
   "computed-property-spacing": 2,
   "consistent-return": 2,
@@ -93,7 +107,24 @@
   "indent": 2,
   "init-declarations": 2,
   "jsx-quotes": 2,
-  "key-spacing": 2,
+  "key-spacing": [2, {
+    "singleLine": {
+      "mode": "strict",
+      "beforeColon": false,
+      "afterColon": true
+    },
+    "multiLine": {
+      "mode": "strict",
+      "beforeColon": false,
+      "afterColon": true
+    },
+    "align": {
+      "mode": "strict",
+      "on": "colon",
+      "beforeColon": false,
+      "afterColon": true
+    }
+}],
   "keyword-spacing": 2,
   "line-comment-position": 2,
   "linebreak-style": 2,
@@ -121,7 +152,9 @@
   }],
   "max-nested-callbacks": 2,
   "max-params": 2,
-  "max-statements-per-line": 2,
+  "max-statements-per-line": [2, {
+    "max": 2
+  }],
   "max-statements": [2, 10, {
     "ignoreTopLevelFunctions": true
   }],
@@ -130,7 +163,7 @@
   "new-cap": 2,
   "new-parens": 2,
   "newline-per-chained-call": [2, {
-    "ignoreChainWithDepth": 2
+    "ignoreChainWithDepth": 3
   }],
   "no-alert": 2,
   "no-array-constructor": 2,
@@ -322,7 +355,9 @@
   "rest-spread-spacing": 2,
   "semi-spacing": 2,
   "semi-style": 2,
-  "semi": 2,
+  "semi": [2, "never", {
+    "beforeStatementContinuationChars": "always"
+  }],
   "sort-imports": 2,
   "sort-keys": [2, "asc", {
     "caseSensitive": true,
