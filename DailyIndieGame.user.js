@@ -618,10 +618,8 @@ top.akk = (function iife ($) {
     _.set(akk, 'activePage', akk.activePage.parentElement)
     _.set(akk, 'oldPages', pages.toArray())
     _.set(akk, 'newPages', akk.newPagesProps.map((cv) => {
-      const clone = akk.appendCloneSel(
-        akk.sel.firstPage,
-        akk.sel.firstPageParent
-      )
+      const clone = akk.appendCloneSel(akk.sel.firstPage,
+                                       akk.sel.firstPageParent)
       clone.firstElementChild.innerText = cv.text
       clone.href = cv.href()
       clone.firstElementChild.className = 'DIG2contentSite'
