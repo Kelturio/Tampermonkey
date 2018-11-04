@@ -419,41 +419,7 @@
   "yoda": 2
 } */
 
-
 /* eslint-env browser, es6, greasemonkey */
-/* eslint no-console: ["error", { allow: ["log", "warn", "error"] }] */
-
-/* eslint block-spacing: ["error", "always"] */
-/* eslint max-statements-per-line: ["error", { "max": 2 }] */
-/* eslint no-mixed-operators: "error" */
-/* eslint semi:
-          ["error", "never", { "beforeStatementContinuationChars": "always"}] */
-/* eslint indent: ["error", 2, {
-         "VariableDeclarator": { "var": 2, "let": 2, "const": 2 },
-         "ArrayExpression": "first",
-         "ObjectExpression": "first",
-         "FunctionExpression": {"body": 1, "parameters": "first"},
-         "CallExpression": {"arguments": "first"}
-         }] */
-/* eslint indent-legacy: "off" */
-/* eslint comma-style: ["error", "first",
-          { "exceptions": { "ArrayExpression": true,
-                            "ObjectExpression": true } }] */
-/* eslint newline-per-chained-call: ["error", { "ignoreChainWithDepth": 3 }] */
-/* eslint key-spacing: ["error", {
-    "multiLine": {
-        "beforeColon": false,
-        "afterColon": true
-
-    },
-    "align": {
-        "beforeColon": false,
-        "afterColon": true,
-        "on": "colon"
-    }
-}] */
-/* eslint function-paren-newline: ["error", "consistent"] */
-
 
 top.akk = (function iife ($) {
   'use strict'
