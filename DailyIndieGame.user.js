@@ -89,7 +89,7 @@
   "func-name-matching": 2,
   "func-names": 2,
   "func-style": 2,
-  "function-paren-newline": 2,
+  "function-paren-newline": [2, "consistent"],
   "generator-star-spacing": 2,
   "getter-return": 2,
   "global-require": 2,
@@ -104,7 +104,33 @@
   }],
   "id-match": 2,
   "implicit-arrow-linebreak": 2,
-  "indent": 2,
+  "indent": [2, 2, {
+    "SwitchCase": 0,
+    "VariableDeclarator": {
+      "var": 2,
+      "let": 2,
+      "const": 2
+    },
+    "outerIIFEBody": 1,
+    "MemberExpression": 1,
+    "FunctionDeclaration": {
+      "parameters": "first",
+      "body": 1
+    },
+    "FunctionExpression": {
+      "parameters": "first",
+      "body": 1
+    },
+    "CallExpression": {
+      "arguments": "first"
+    },
+    "ArrayExpression": "first",
+    "ObjectExpression": "first",
+    "ImportDeclaration": "first",
+    "flatTernaryExpressions": false,
+    "ignoredNodes": [],
+    "ignoreComments": false
+  }],
   "init-declarations": 2,
   "jsx-quotes": 2,
   "key-spacing": [2, {
@@ -177,7 +203,9 @@
   "no-compare-neg-zero": 2,
   "no-cond-assign": 2,
   "no-confusing-arrow": [2, {"allowParens": true}],
-  "no-console": 2,
+  "no-console": [2, {
+    allow: ["error", "log", "warn"]
+  }],
   "no-const-assign": 2,
   "no-constant-condition": 2,
   "no-continue": 2,
@@ -315,8 +343,13 @@
   "no-with": 2,
   "nonblock-statement-body-position": 2,
   "object-curly-newline": 2,
-  "object-curly-spacing": 2,
-  "object-property-newline": 2,
+  "object-curly-spacing": [2, "never", {
+    "arraysInObjects": true,
+    "objectsInObjects": true
+  }],
+  "object-property-newline": [2, {
+    "allowAllPropertiesOnSameLine": true
+  }],
   "object-shorthand": 2,
   "one-var-declaration-per-line": 2,
   "one-var": 2,
