@@ -9,7 +9,7 @@
 // @grant        none
 // ==/UserScript==
 
-/* global _, loadjs */
+/* global _, loadjs, Sugar */
 /* exported akk */
 
 /* eslint {
@@ -531,7 +531,6 @@ top.akk = (function iife ($) {
         } else {
           console.error('saveLocalStorage'.concat(' ', cv.key))
         }
-        /* eslint-disable-next-line no-magic-numbers */
         if (i === akk.localStorageKeys.length - 1) {
           resolve()
         }
@@ -539,6 +538,7 @@ top.akk = (function iife ($) {
       })
     })
   }
+
   akk.addBlacklist = (appid) => {
     console.log('addBlacklist', appid)
     akk.blacklist = akk.blacklist.add(appid)
@@ -572,39 +572,28 @@ top.akk = (function iife ($) {
     console.log('appendCloneSel')
     return $(destination).append($(target).clone())[0].lastChild
   }
+  akk.newPagesPropsHref = (next) => {
+    const el = _.get(akk, `activePage.${next ? 'next' : 'previous'}ElementSibling`)
+    return el.nodeName !== 'BR' && (+el.innerText).isInteger()
+      ? el.href
+      : akk.oldPages[`${next ? 'last' : 'first'}`].href
+  }
   akk.newPagesProps = [
     {
-      text: '|<<<',
-      /* eslint-disable-next-line sort-keys */
       href: () => akk.oldPages.first().href,
+      text: '|<<<',
     },
     {
+      href: () => akk.newPagesPropsHref(false),
       text: '<<<',
-      /* eslint-disable-next-line sort-keys, arrow-body-style */
-      href: () => {
-        return akk.activePage.previousElementSibling &&
-          akk.activePage.previousElementSibling.nodeName !== 'BR' &&
-          Number.isFinite(Number(akk.activePage
-            .previousElementSibling.innerText))
-          ? akk.activePage.previousElementSibling
-          : akk.oldPages.first().href
-      },
     },
     {
+      href: () => akk.newPagesPropsHref(true),
       text: '>>>',
-      /* eslint-disable-next-line sort-keys, arrow-body-style */
-      href: () => {
-        return akk.activePage.nextElementSibling &&
-          Number.isFinite(Number(akk.activePage
-            .nextElementSibling.innerText))
-          ? akk.activePage.nextElementSibling.href
-          : akk.oldPages.last().href
-      },
     },
     {
-      text: '>>>|',
-      /* eslint-disable-next-line sort-keys */
       href: () => akk.oldPages.last().href,
+      text: '>>>|',
     },
   ]
   akk.modPages = () => {
@@ -631,7 +620,6 @@ top.akk = (function iife ($) {
     if (!location.pathname.includes('account_page')) {
       return
     }
-    /* eslint-disable-next-line no-magic-numbers */
     _.set(akk, 'tableKeys', $(akk.sel.rowsTableKeys).toArray().from(1)
       .map((tr) => {
         const key = tr.children[4].innerText
