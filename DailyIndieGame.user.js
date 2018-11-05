@@ -786,11 +786,13 @@ top.akk = (function iife ($) {
   */
   akk.bundles = {
     /* eslint-disable sort-keys */
-    'sugar'      : ['https://cdnjs.cloudflare.com/ajax/libs/sugar/2.0.4/sugar.min.js'],
-    'lodash'     : ['https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.min.js'],
-    'ramda'      : ['https://cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js'],
-    'localforage': ['https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.2/localforage.min.js'],
-    'blueimp-md5': ['https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js'],
+    // 'sugar'      : ['https://cdnjs.cloudflare.com/ajax/libs/sugar/2.0.4/sugar.min.js'],
+    // 'lodash'     : ['https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.min.js'],
+    // 'ramda'      : ['https://cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js'],
+    // 'localforage': ['https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.3/localforage.min.js'],
+    // 'blueimp-md5': ['https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js'],
+    // 'akk'        : ['https://cdn.jsdelivr.net/gh/Kelturio/Tampermonkey/akk.js'],
+    'requirejs'  : ['https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js'],
     /* eslint-enable sort-keys */
   }
   /* eslint-disable max-len */
@@ -846,13 +848,28 @@ top.akk = (function iife ($) {
   }
   akk.Setup = (...args) => {
     console.log('Setup', args)
-    top.Sugar.extend()
-    akk.loadLocalStorage()
+    requirejs.config({
+      paths: {
+        'sugar'      : ['https://cdnjs.cloudflare.com/ajax/libs/sugar/2.0.4/sugar.min'],
+        'lodash'     : ['https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.min'],
+        'ramda'      : ['https://cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min'],
+        'localforage': ['https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.3/localforage.min'],
+        'blueimp-md5': ['https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min'],
+        'akk'        : ['https://cdn.jsdelivr.net/gh/Kelturio/Tampermonkey/akk'],
+      },
+    })
+    require(['lodash', 'sugar', 'localforage', 'blueimp-md5'], (lodash, sugar, localforage, md5) => {
+      console.log('args', [lodash, sugar, localforage, md5])
+      Sugar.extend()
+      top.localforage = localforage
+      top.md5 = md5
+      akk.loadLocalStorage()
       //  .then(() => akk.checkUserData())
       //  .then(() => akk.updateUserData())
       .then(() => akk.saveLocalStorage())
       .catch(() => console.warn('catch'))
       .then(() => akk.main())
+    })
   }
   /* eslint-disable-next-line max-statements */
   akk.main = () => {
