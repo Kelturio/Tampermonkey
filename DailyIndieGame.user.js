@@ -573,9 +573,9 @@ top.akk = (function iife ($) {
     return $(destination).append($(target).clone())[0].lastChild
   }
   akk.newPagesPropsHref = (next) => {
-    const el = _.get(akk, `activePage.${next ? 'next' : 'previous'}ElementSibling`)
-    return el.nodeName !== 'BR' && (+el.innerText).isInteger()
-      ? el.href
+    const {nodeName, innerText, href} = _.get(akk, `activePage.${next ? 'next' : 'previous'}ElementSibling`)
+    return nodeName !== 'BR' && (+innerText).isInteger()
+      ? href
       : akk.oldPages[`${next ? 'last' : 'first'}`].href
   }
   akk.newPagesProps = [
@@ -600,9 +600,7 @@ top.akk = (function iife ($) {
     console.log('modPages')
     _.set(akk, 'activePage', $(akk.sel.activePage)[0])
     const pages = akk.getPages()
-    if (!pages.length || !akk.activePage) {
-      return
-    }
+    if (!pages.length || !akk.activePage) { return }
     _.set(akk, 'activePage', akk.activePage.parentElement)
     _.set(akk, 'oldPages', pages.toArray())
     _.set(akk, 'newPages', akk.newPagesProps.map((cv) => {
@@ -617,9 +615,7 @@ top.akk = (function iife ($) {
   }
   akk.modTableKeysAccount = () => {
     console.log('modTableKeysAccount')
-    if (!location.pathname.includes('account_page')) {
-      return
-    }
+    if (!location.pathname.includes('account_page')) { return }
     _.set(akk, 'tableKeys', $(akk.sel.rowsTableKeys).toArray().from(1)
       .map((tr) => {
         const key = tr.children[4].innerText
@@ -698,13 +694,11 @@ top.akk = (function iife ($) {
     akk.saveLocalStorage()
     return rows
   }
-  akk.addChecksumObj = (obj) => _.set(obj, 'md5', top.md5(JSON.stringify(Object
-    .reject(obj, ['no', 'ts', 'md5']))))
+  akk.addChecksumObj = (obj) => _.set(obj, 'md5',
+                                      md5(JSON.stringify(Object.reject(obj, ['no', 'ts', 'md5']))))
   akk.modDPSform = () => {
     console.log('modDPSform')
-    if (!location.pathname.includes('account_buy')) {
-      return
-    }
+    if (!location.pathname.includes('account_buy')) { return }
     if ($('#DPSform')[0] && $('#DPSform')[0].onsubmit) {
       $('#DPSform')[0].onsubmit = () => true
     }
@@ -717,9 +711,7 @@ top.akk = (function iife ($) {
   akk.addGameUrl = (td) => {
     let href = _.values(akk.gameData)
       .filter((cv) => _.get(cv, 'gameTitle', '').includes(td.textContent.compact()))
-    if (!href.length) {
-      return false
-    }
+    if (!href.length) { return false }
     href = akk.url.app.concat(href.first().gameId)
     const anchor = $('<a/>').attr('href', href).appendTo(td)
     $('<span/>').text(td.textContent).appendTo(anchor)
