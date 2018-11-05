@@ -1,11 +1,9 @@
-console.log('akk')
-export var myVar1 = 42;
-export let myVar2 = 420;
-export const MY_CONST = 1337;
-
-export function myFunc() {
-    
-}
-export class MyClass {
-    
+module staff{
+    // specify (public) exports that can be consumed by
+    // other modules
+    export var baker = {
+        bake: function( item ){
+            console.log('Woo! I just baked ' + item);
+        }
+    }   
 }
