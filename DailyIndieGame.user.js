@@ -429,7 +429,7 @@ top.akk = (function iife ($) {
   akk.minRowLenUpdGameData = 2
   akk.url = {
     app        : 'http://store.steampowered.com/app/',
-    loadjs     : 'https://cdnjs.cloudflare.com/ajax/libs/loadjs/3.5.4/loadjs.js',
+    loadjs     : 'https://cdnjs.cloudflare.com/ajax/libs/loadjs/3.5.4/loadjs.umd.min.js',
     registerKey: 'https://store.steampowered.com/account/registerkey?key=',
     userdata   : 'https://store.steampowered.com/dynamicstore/userdata/',
   }
