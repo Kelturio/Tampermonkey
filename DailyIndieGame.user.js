@@ -836,9 +836,7 @@ top.akk = (function iife ($) {
     })
     require(['akk'], (akk) => {
       top.akk.akk = akk
-      requirejs.config({
-        paths: akk.cfg.paths,
-      })
+      akk.addPathsToRequire()
       require(['lodash', 'sugar', 'localforage', 'blueimp-md5'], (lodash, sugar, localforage, md5) => {
         console.log('args', [lodash, sugar, localforage, md5])
         Sugar.extend()
