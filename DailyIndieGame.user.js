@@ -325,7 +325,11 @@
   "no-unreachable": 2,
   "no-unsafe-finally": 2,
   "no-unsafe-negation": 2,
-  "no-unused-expressions": 2,
+  "no-unused-expressions": [, {
+    "allowShortCircuit": true,
+    "allowTernary": false,
+    "allowTaggedTemplates": false,
+  }],
   "no-unused-labels": 2,
   "no-unused-vars": 2,
   "no-use-before-define": 2,
@@ -387,7 +391,7 @@
   "require-yield": 2,
   "rest-spread-spacing": 2,
   "semi-spacing": 2,
-  "semi-style": 2,
+  "semi-style": [2, "first"]
   "semi": [2, "never", {
     "beforeStatementContinuationChars": "always"
   }],
@@ -613,6 +617,7 @@ top.akk = (function iife ($) {
     }))
     pages.appendTo($(akk.sel.firstPageParent))
   }
+  akk.isValidKey = (key) => key !== 'Reveal key' && key !== '[key USED]'
   akk.modTableKeysAccount = () => {
     console.log('modTableKeysAccount')
     if (!location.pathname.includes('account_page')) { return }
@@ -624,6 +629,7 @@ top.akk = (function iife ($) {
         $('<span/>').addClass('DIG3_14_White')
           .text('Activate Key')
           .appendTo(anchor)
+        akk.isValidKey(key) && anchor.css('display', 'none')
         akk.addButtonBlacklist(tr, akk.addGameUrl(tr.children[2]))
         return {key, tr}
       }))
@@ -772,7 +778,7 @@ top.akk = (function iife ($) {
     // 'localforage': ['https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.3/localforage.min.js'],
     // 'blueimp-md5': ['https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js'],
     // 'akk'        : ['https://cdn.jsdelivr.net/gh/Kelturio/Tampermonkey/akk.js'],
-    'requirejs'  : ['https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js'],
+    requirejs: ['https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js'],
     /* eslint-enable sort-keys */
   }
   /* eslint-disable max-len */
@@ -830,8 +836,9 @@ top.akk = (function iife ($) {
     console.log('Setup', args)
     require.config({
       paths: {
-        'akk': [`https://kelturio.github.io/Akk/akk.js?_=${Date.now()}`],
-        'paths': [`https://kelturio.github.io/Akk/paths.js?_=${Date.now()}`],
+        // X'akk': [`https://kelturio.github.io/Akk/akk.js?_=${Date.now()}`],
+        akk  : [`http://git.l5590/Akk/akk.js?_=${Date.now()}`],
+        paths: [`http://git.l5590/Akk/paths.js?_=${Date.now()}`],
       },
     })
     require(['akk'], (akk) => {
