@@ -828,27 +828,29 @@ top.akk = (function iife ($) {
   }
   akk.Setup = (...args) => {
     console.log('Setup', args)
-    requirejs.config({
+    require.config({
       paths: {
-        'sugar'      : ['https://cdnjs.cloudflare.com/ajax/libs/sugar/2.0.4/sugar.min'],
-        'lodash'     : ['https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.min'],
-        'ramda'      : ['https://cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min'],
-        'localforage': ['https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.3/localforage.min'],
-        'blueimp-md5': ['https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min'],
-        'akk'        : ['https://cdn.jsdelivr.net/gh/Kelturio/Tampermonkey/akk'],
+        'akk': [`https://kelturio.github.io/Akk/akk.js?_=${Date.now()}`],
+        'paths': [`https://kelturio.github.io/Akk/paths.js?_=${Date.now()}`],
       },
     })
-    require(['lodash', 'sugar', 'localforage', 'blueimp-md5'], (lodash, sugar, localforage, md5) => {
-      console.log('args', [lodash, sugar, localforage, md5])
-      Sugar.extend()
-      top.localforage = localforage
-      top.md5 = md5
-      akk.loadLocalStorage()
-      //  .then(() => akk.checkUserData())
-      //  .then(() => akk.updateUserData())
-      .then(() => akk.saveLocalStorage())
-      .catch(() => console.warn('catch'))
-      .then(() => akk.main())
+    require(['akk'], (akk) => {
+      top.akk.akk = akk
+      requirejs.config({
+        paths: akk.cfg.paths,
+      })
+      require(['lodash', 'sugar', 'localforage', 'blueimp-md5'], (lodash, sugar, localforage, md5) => {
+        console.log('args', [lodash, sugar, localforage, md5])
+        Sugar.extend()
+        top.localforage = localforage
+        top.md5 = md5
+        top.akk.loadLocalStorage()
+        //  .then(() => akk.checkUserData())
+        //  .then(() => akk.updateUserData())
+          .then(() => top.akk.saveLocalStorage())
+          .catch(() => console.warn('catch'))
+          .then(() => top.akk.main())
+      })
     })
   }
   /* eslint-disable-next-line max-statements */
