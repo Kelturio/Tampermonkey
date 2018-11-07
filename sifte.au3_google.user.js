@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         sifte.au3_google
 // @namespace    http://tampermonkey.net/
-// @version      1.7
+// @version      1.8.1
 // @description  try to take over the world!
 // @author       Searinox
 // @icon         https://avatars0.githubusercontent.com/u/16297928?s=460&v=4
@@ -29,6 +29,7 @@
             'SFX_FART'
         ].map((cv) => new Audio(`${url}${cv}.wav`)),
         play = (audio) => {
+            audio.volume = 0.33;
             audio.pause();
             audio.currentTime = 0;
             audio.play();
