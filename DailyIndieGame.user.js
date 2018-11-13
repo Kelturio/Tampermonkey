@@ -9,7 +9,7 @@
 // @grant        none
 // ==/UserScript==
 
-/* global _, loadjs, Sugar */
+/* global $, _, loadjs, Sugar */
 /* exported akk */
 
 /* eslint {
@@ -425,10 +425,77 @@
 
 /* eslint-env browser, es6, greasemonkey */
 
-top.akk = (function iife ($) {
-  'use strict'
-  const akk = {}
+top.akk = (function iife () {
+  //'use strict'
+  const USER_TIMING_API = true
+  const akk = {
+    init (script, textStatus) {
+      USER_TIMING_API && performance.mark(akk.getCallerName())
+      console.log(`Init ${script} ${textStatus}`)
+      const bundleIds = Object.keys(akk.bundles).map((bundleId) => {
+        if (!loadjs.isDefined(bundleId)) {
+          loadjs(akk.bundles[bundleId], bundleId)
+          loadjs.ready(bundleId, (...args) => console.log(`loadjs ${bundleId}`,
+                                                          args))
+        }
+        return bundleId
+      })
+      loadjs.ready(bundleIds, akk.setup)
+    },
+
+    setup: (...args) => {
+      USER_TIMING_API && performance.mark(akk.getCallerName())
+      console.log('Setup', args)
+      require.config({
+        paths: {
+          // X'akk': [`https://kelturio.github.io/Akk/akk.js?_=${Date.now()}`],
+          akk  : [`http://git.l5590/Akk/akk.js?_=${Date.now()}`],
+          paths: [`http://git.l5590/Akk/paths.js?_=${Date.now()}`],
+        },
+      })
+      require(['akk'], (akk) => {
+        top.akk.akk = akk
+        akk.addPathsToRequire()
+        require(['lodash', 'sugar', 'localforage', 'blueimp-md5'], (lodash, sugar, localforage, md5) => {
+          console.log('args', [lodash, sugar, localforage, md5])
+          Sugar.extend()
+          top.localforage = localforage
+          top.md5 = md5
+          top.akk.loadLocalStorage()
+          //  .then(() => akk.checkUserData())
+          //  .then(() => akk.updateUserData())
+          //  .then(() => top.akk.saveLocalStorage())
+          //  .catch(() => console.warn('catch'))
+            .then(() => top.akk.main())
+        })
+      })
+    },
+
+    /* eslint-disable-next-line max-statements */
+    main () {
+      USER_TIMING_API && performance.mark(akk.getCallerName())
+      USER_TIMING_API && performance.measure('InitMain', 'init', 'main')
+      console.log(akk.getCallerName(), [performance.getEntries().filter(cv => cv.entryType === 'mark')])
+      akk.removeAds()
+      akk.modPages()
+      akk.modTableKeysAccount()
+      akk.modDPSform()
+      akk.updateGameData()
+      akk.modTableKeysXT()
+      akk.hideGamesOwned()
+      akk.modBodyTable()
+      console.log(akk)
+      /* eslint-disable-next-line no-console */
+      console.dir(akk)
+    },
+
+    getCallerName: function getCallerName () {
+      /* eslint-disable-next-line no-caller */
+      return arguments.callee.caller ? arguments.callee.caller.name : ''
+    },
+  }
   //  , NUM_RETRIES = 0
+
   akk.userDataRefresh = 120e3
   akk.minRowLenUpdGameData = 2
   akk.url = {
@@ -451,6 +518,7 @@ top.akk = (function iife ($) {
     rowsTableKeys: '#TableKeys > tbody > tr',
     tableKeysRow : '#TableKeys > tbody > tr',
   }
+
   akk.checkUserData = () => {
     console.error('checkUserData')
     return new Promise((resolve, reject) => {
@@ -629,7 +697,7 @@ top.akk = (function iife ($) {
         $('<span/>').addClass('DIG3_14_White')
           .text('Activate Key')
           .appendTo(anchor)
-        akk.isValidKey(key) && anchor.css('display', 'none')
+        !akk.isValidKey(key) && anchor.css('display', 'none')
         akk.addButtonBlacklist(tr, akk.addGameUrl(tr.children[2]))
         return {key, tr}
       }))
@@ -820,60 +888,7 @@ top.akk = (function iife ($) {
   akk.getGameTitlesUnique = () => _
     .values(akk.gameData).map((cv) => cv.gameTitle).unique()
 
-  akk.Init = (script, textStatus) => {
-    console.log(`Init ${script} ${textStatus}`)
-    const bundleIds = Object.keys(akk.bundles).map((bundleId) => {
-      if (!loadjs.isDefined(bundleId)) {
-        loadjs(akk.bundles[bundleId], bundleId)
-        loadjs.ready(bundleId, (...args) => console.log(`loadjs ${bundleId}`,
-                                                        args))
-      }
-      return bundleId
-    })
-    loadjs.ready(bundleIds, akk.Setup)
-  }
-  akk.Setup = (...args) => {
-    console.log('Setup', args)
-    require.config({
-      paths: {
-        // X'akk': [`https://kelturio.github.io/Akk/akk.js?_=${Date.now()}`],
-        akk  : [`http://git.l5590/Akk/akk.js?_=${Date.now()}`],
-        paths: [`http://git.l5590/Akk/paths.js?_=${Date.now()}`],
-      },
-    })
-    require(['akk'], (akk) => {
-      top.akk.akk = akk
-      akk.addPathsToRequire()
-      require(['lodash', 'sugar', 'localforage', 'blueimp-md5'], (lodash, sugar, localforage, md5) => {
-        console.log('args', [lodash, sugar, localforage, md5])
-        Sugar.extend()
-        top.localforage = localforage
-        top.md5 = md5
-        top.akk.loadLocalStorage()
-        //  .then(() => akk.checkUserData())
-        //  .then(() => akk.updateUserData())
-          .then(() => top.akk.saveLocalStorage())
-          .catch(() => console.warn('catch'))
-          .then(() => top.akk.main())
-      })
-    })
-  }
-  /* eslint-disable-next-line max-statements */
-  akk.main = () => {
-    console.log('main')
-    akk.removeAds()
-    akk.modPages()
-    akk.modTableKeysAccount()
-    akk.modDPSform()
-    akk.updateGameData()
-    akk.modTableKeysXT()
-    akk.hideGamesOwned()
-    akk.modBodyTable()
-    console.log(akk)
-    /* eslint-disable-next-line no-console */
-    console.dir(akk)
-  }
-  $.getScript(akk.url.loadjs).done(akk.Init)
+  $.getScript(akk.url.loadjs).done(akk.init)
     .fail((...args) => console.error('Triggered ajaxError handler.', args))
   return akk
-}(top.jQuery))
+}())
