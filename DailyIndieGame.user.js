@@ -717,21 +717,21 @@ top.akk = (function iife () {
       if (location.pathname.includes('digstore') || location.pathname.includes('store_updateshowdlc')) {
         cols = {
           /* eslint-disable sort-keys */
-          no          : parseInt(cols[0].textContent),
-          new         : cols[1].innerHTML.compact().includes('New'),
-          steamPrice  : parseFloat(cols[2].textContent.replace('$', '')),
-          gameTitle   : cols[3].textContent,
-          gameId      : akk.getAppidFromUrl(_.get(cols, '[3].children.[0].href')),
-          type        : cols[4].textContent,
-          macOs       : cols[5].innerHTML.includes('img'),
-          linux       : cols[6].innerHTML.includes('img'),
-          vr          : cols[7].innerHTML.includes('img'),
-          achievements: cols[8].innerHTML.includes('img'),
-          card        : cols[9].textContent.includes('YES'),
-          priceUSD    : parseFloat(cols[11].textContent.replace('$', '')),
-          buyId       : cols[12].children[0] && Number(cols[12].children[0].href.replace(/\D+/gu, '')),
-          buyTrade    : cols[12].children[0] && cols[12].children[0].href.includes('buytrade'),
-          ts          : Date.now(),
+          'no'          : parseInt(cols[0].textContent),
+          'new'         : cols[1].innerHTML.compact().includes('New'),
+          'steamPrice'  : parseFloat(cols[2].textContent.replace('$', '')),
+          'gameTitle'   : cols[3].textContent,
+          'gameId'      : akk.getAppidFromUrl(_.get(cols, '[3].children.[0].href')),
+          'type'        : cols[4].textContent,
+          'macOs'       : cols[5].innerHTML.includes('img'),
+          'linux'       : cols[6].innerHTML.includes('img'),
+          'vr'          : cols[7].innerHTML.includes('img'),
+          'achievements': cols[8].innerHTML.includes('img'),
+          'card'        : cols[9].textContent.includes('YES'),
+          'priceUSD'    : parseFloat(cols[11].textContent.replace('$', '')),
+          'buyId'       : cols[12].children[0] && Number(cols[12].children[0].href.replace(/\D+/gu, '')),
+          'buyTrade'    : cols[12].children[0] && cols[12].children[0].href.includes('buytrade'),
+          'ts'          : Date.now(),
           /* eslint-enable sort-keys */
         }
       } else if (location.pathname.includes('tradesXT') || location.pathname.includes('storeXT')) {
