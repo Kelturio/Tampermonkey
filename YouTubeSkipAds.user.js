@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTubeSkipAds
 // @namespace    http://tampermonkey.net/
-// @version      1.6.1
+// @version      1.3.4
 // @description  try to take over the world!
 // @author       Searinox
 // @icon         https://avatars0.githubusercontent.com/u/16297928?s=460&v=4
@@ -21,11 +21,7 @@
   function skipAd () {
     let video = document.querySelector(cssVideo)
     if (video && video.src) {
-      i++ % 4 && clean()
-      if (video.src !== lastSrc) {
-        console.warn('CHANGED SRC', [video.src, lastSrc])
-        clean()
-      }
+      (i++ % 8 || video.src !== lastSrc) && clean()
       lastSrc = video.src
     }
   }
