@@ -427,6 +427,7 @@
 
 top.akk = (function iife () {
   //'use strict'
+  const DEBUG = true
   const USER_TIMING_API = true
   const akk = {
     init (script, textStatus) {
@@ -574,7 +575,8 @@ top.akk = (function iife () {
   ]
   akk.blacklist = []
   akk.gameData = {}
-  akk.loadLocalStorage = () => {
+  akk.loadLocalStorage = function loadLocalStorage () {
+    USER_TIMING_API && performance.mark(akk.getCallerName())
     console.log('loadLocalStorage')
     return new Promise((resolve) => {
       akk.localStorageKeys.map((cv, i) => top.localforage.getItem(cv.key)
@@ -691,7 +693,7 @@ top.akk = (function iife () {
     if (!location.pathname.includes('account_page')) { return }
     _.set(akk, 'tableKeys', $(akk.sel.rowsTableKeys).toArray().from(1)
       .map((tr) => {
-        const key = tr.children[4].innerText
+        const key = tr.children[4].innerText.compact()
             , td = $('<td/>').attr('valign', 'top').appendTo(tr)
             , anchor = $('<a/>').attr('href', akk.url.registerKey.concat(key)).appendTo(td)
         $('<span/>').addClass('DIG3_14_White')
